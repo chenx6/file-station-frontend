@@ -1,0 +1,7 @@
+@media (max-width: 576px) {
+    /* Hide in mobile view */
+    .invisible-sm {
+      visibility: hidden !important;
+      height: 0 !important;
+    }
+}
