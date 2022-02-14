@@ -1,3 +1,5 @@
+import * as pathlib from "path-browserify";
+
 const base = "http://localhost:5000/api/v1/";
 const jsonContent = { "Content-Type": "application/json" };
 
@@ -34,6 +36,19 @@ const fetchJsonJwt = async (input, init = {}) => {
   return await response.json();
 }
 
+/**
+ * Simulate <a> tag to download file
+ * @param {string} url download url
+ * @param {string} fileName download file name
+ */
+const simDownload = (url, fileName) => {
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
 const login = async (username, password) => {
   return await fetch(`${base}auth`, {
     headers: jsonContent,
@@ -66,7 +81,8 @@ const uploadFile = async (path, file) => {
 }
 
 const downloadFile = (path) => {
-  window.open(`${base}file?name=${path}`);
+  let fileName = pathlib.basename(path)
+  simDownload(`${base}file?name=${path}`, fileName);
 }
 
 const fetchFolderContent = async (path) => {
@@ -123,12 +139,7 @@ const getShareFile = async (url, file_name, file_path, password) => {
   if (password && password.length === 0) {
     query += `&password=${password}`;
   }
-  let a = document.createElement("a");
-  a.href = query;
-  a.download = file_name;
-  a.click();
-  window.URL.revokeObjectURL(query);
-  // return window.open(query);
+  simDownload(query, file_name);
 }
 
 const deleteShareFile = async (path) => {
