@@ -1,6 +1,6 @@
 import * as pathlib from "path-browserify";
 
-const base = "http://localhost:5000/api/v1/";
+const base = "/api/v1/";
 const jsonContent = { "Content-Type": "application/json" };
 
 /**
