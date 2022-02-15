@@ -4,6 +4,8 @@
   import * as pathlib from "path-browserify";
   import FileList from "./lib/FileList.svelte";
   import NavBar from "./lib/NavBar.svelte";
+  import Player from "./lib/Player.svelte";
+  import { supportVideoType, supportAudioType } from "./lib/store";
   import {
     createFolder,
     deleteFile,
@@ -13,12 +15,15 @@
     downloadFile,
     searchFile,
     addShareFile,
+    genDownloadUrl,
   } from "./lib/api.js";
   import { calcPath, formatShareUrl, getPathByIndex } from "./lib/path.js";
   export let path;
 
   let files = [];
   let loading = false; // Showing loading spinner
+  let playing = false, // Video/Audio playing
+    playingFile;
 
   const gotoFolder = (event) => {
     let newPath = calcPath(event.detail, path);
@@ -42,6 +47,29 @@
     }
     files = fetched;
     loading = false;
+  };
+
+  const genPlaylist = () => {
+    let playlist = [...files].filter((file) => {
+      let ext = pathlib.extname(file.name);
+      return supportAudioType.includes(ext) || supportVideoType.includes(ext);
+    });
+    // Add src to support player
+    playlist.forEach(
+      (file) => (file.src = genDownloadUrl(pathlib.join(path, file.name)))
+    );
+    return playlist;
+  };
+
+  const downloadOrPreview = (event) => {
+    let file = event.detail;
+    let ext = pathlib.extname(file.name);
+    if (supportVideoType.includes(ext) || supportAudioType.includes(ext)) {
+      playing = true;
+      playingFile = file;
+      return;
+    }
+    downloadFile(calcPath(file, path));
   };
 
   const downloadFileHandler = (event) => {
@@ -113,7 +141,8 @@
   {:else}
     <FileList
       {files}
-      on:clickFile={downloadFileHandler}
+      on:clickFile={downloadOrPreview}
+      on:downloadFile={downloadFileHandler}
       on:deleteFile={deleteFileHandler}
       on:renameFile={renameFileHandler}
       on:uploadFile={uploadFileHandler}
@@ -122,5 +151,16 @@
       on:share={shareHandler}
       on:moveFile={moveFileHandler}
     />
+  {/if}
+  {#if playingFile}
+    <Modal
+      header="Preview"
+      body
+      size="xl"
+      isOpen={playing}
+      toggle={() => (playing = false)}
+    >
+      <Player files={genPlaylist()} selected={playingFile} on:clickDownload={downloadFileHandler} />
+    </Modal>
   {/if}
 </div>

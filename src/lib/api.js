@@ -80,9 +80,16 @@ const uploadFile = async (path, file) => {
   return await fetchWithJwt(`${base}file`, { body: form, method: "POST" });
 }
 
+/**
+ * Generate download url based on relative path
+ * @param {string} path 
+ * @returns {string}
+ */
+const genDownloadUrl = (path) => `${base}file?name=${path}`
+
 const downloadFile = (path) => {
   let fileName = pathlib.basename(path)
-  simDownload(`${base}file?name=${path}`, fileName);
+  simDownload(genDownloadUrl(path), fileName);
 }
 
 const fetchFolderContent = async (path) => {
@@ -159,7 +166,7 @@ const resetPassword = async (oldPassword, newPassword) => {
 }
 
 export {
-  fetchJsonJwt, fetchWithJwt,
+  fetchJsonJwt, fetchWithJwt, genDownloadUrl,
   deleteFile, renameFile, uploadFile, downloadFile, searchFile,
   createFolder, fetchFolderContent,
   addShareFile, getShareFolder, getShareFile, deleteShareFile, getShareIndex,

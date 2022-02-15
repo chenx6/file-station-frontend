@@ -12,6 +12,7 @@ interface IShareIndex {
     password: string,
 }
 
+function genDownloadUrl(path: string): string;
 async function fetchWithJwt(input: string, init: any = {});
 async function createFolder(path: string): Promise<Response>;
 async function deleteFile(path: string): Promise<Response>;
@@ -29,6 +30,7 @@ async function resetPassword(oldPassword: string, newPassword: string): Promise<
 
 export {
     IFile,
+    genDownloadUrl,
     fetchWithJwt,
     createFolder,
     deleteFile,
