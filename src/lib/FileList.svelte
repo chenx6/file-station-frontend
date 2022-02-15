@@ -48,6 +48,10 @@
     }
   };
 
+  const downloadFile = (file) => {
+    dispatch("downloadFile", file);
+  };
+
   const deleteFile = (file) => dispatch("deleteFile", file);
 
   // Pop up rename window, use `renameFile` to finish rename
@@ -207,9 +211,15 @@
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
       <Col>
-        <div on:click|stopPropagation>
+        <div class="d-flex" on:click|stopPropagation>
+          <Button class="invisible" color="light">
+            <Icon name="download" />
+          </Button>
+          <div class="px-1" />
           <Dropdown>
-            <DropdownToggle class="btn btn-light">...</DropdownToggle>
+            <DropdownToggle class="btn btn-light">
+              <Icon name="three-dots" />
+            </DropdownToggle>
             <DropdownMenu>
               <DropdownItem on:click={() => (uploading = true)}>
                 Upload file
@@ -236,9 +246,15 @@
         </Col>
         <Col class="invisible-sm text-truncate">{file.size}</Col>
         <Col>
-          <div on:click|stopPropagation>
+          <div class="d-flex" on:click|stopPropagation>
+            <Button color="light" on:click={() => downloadFile(file)}>
+              <Icon name="download" />
+            </Button>
+            <div class="px-1" />
             <Dropdown>
-              <DropdownToggle class="btn btn-light">...</DropdownToggle>
+              <DropdownToggle class="btn btn-light">
+                <Icon name="three-dots" />
+              </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem on:click={() => startRenaming(file)}>
                   Rename
