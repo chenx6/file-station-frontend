@@ -140,17 +140,21 @@
 -->
 <div id="file-list">
   <!-- Modal windows -->
-  <Modal
-    body
-    header="Upload file"
-    isOpen={uploading}
-    toggle={() => (uploading = false)}
-  >
-    <Input type="file" bind:files={uploadFiles} />
-    <ModalFooter>
-      <Button on:click={uploadFile}>Start upload</Button>
-    </ModalFooter>
-  </Modal>
+  <!-- Wrap {#if} to fix when `uploading = false`
+    modal background doesn't disappear -->
+  {#if uploading}
+    <Modal
+      body
+      header="Upload file"
+      isOpen={uploading}
+      toggle={() => (uploading = false)}
+    >
+      <Input type="file" bind:files={uploadFiles} />
+      <ModalFooter>
+        <Button on:click={uploadFile}>Start upload</Button>
+      </ModalFooter>
+    </Modal>
+  {/if}
   <Modal
     body
     header="Create folder"
