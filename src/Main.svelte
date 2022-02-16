@@ -6,10 +6,12 @@
   import NavBar from "./lib/NavBar.svelte";
   import Player from "./lib/Player.svelte";
   import Gallery from "./lib/Gallery.svelte";
+  import Text from "./lib/Text.svelte";
   import {
     supportVideoType,
     supportAudioType,
     supportImageType,
+    supportTextType,
   } from "./lib/store";
   import {
     createFolder,
@@ -31,6 +33,8 @@
     playingFile;
   let showingImg = false,
     img;
+  let showingText = false,
+    textFile;
 
   const gotoFolder = (event) => {
     let newPath = calcPath(event.detail, path);
@@ -56,7 +60,9 @@
     loading = false;
   };
 
-  // Filter file and generate direct url
+  /** Filter file and generate direct url
+   *  @param {(file) => boolean} filterFunc
+   */
   const genFileList = (filterFunc) => {
     let filteredList = [...files].filter((file) => filterFunc(file));
     // Add src to support player
@@ -87,6 +93,11 @@
     } else if (supportImageType.includes(ext)) {
       showingImg = true;
       img = file;
+      return;
+    } else if (supportTextType.includes(ext)) {
+      file.src = genDownloadUrl(calcPath(file, path));
+      showingText = true;
+      textFile = file;
       return;
     }
     downloadFile(calcPath(file, path));
@@ -185,7 +196,15 @@
       on:clickDownload={downloadFileHandler}
     />
   </Modal>
-
+  <Modal
+    header="Preview"
+    body
+    size="xl"
+    isOpen={showingText}
+    toggle={() => (showingText = false)}
+  >
+    <Text file={textFile} />
+  </Modal>
   <Modal size="xl" isOpen={showingImg} toggle={() => (showingImg = false)}>
     <Gallery files={genImagelist()} selected={img} />
   </Modal>
