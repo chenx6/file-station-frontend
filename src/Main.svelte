@@ -5,7 +5,12 @@
   import FileList from "./lib/FileList.svelte";
   import NavBar from "./lib/NavBar.svelte";
   import Player from "./lib/Player.svelte";
-  import { supportVideoType, supportAudioType } from "./lib/store";
+  import Gallery from "./lib/Gallery.svelte";
+  import {
+    supportVideoType,
+    supportAudioType,
+    supportImageType,
+  } from "./lib/store";
   import {
     createFolder,
     deleteFile,
@@ -24,6 +29,8 @@
   let loading = false; // Showing loading spinner
   let playing = false, // Video/Audio playing
     playingFile;
+  let showingImg = false,
+    img;
 
   const gotoFolder = (event) => {
     let newPath = calcPath(event.detail, path);
@@ -49,17 +56,26 @@
     loading = false;
   };
 
-  const genPlaylist = () => {
-    let playlist = [...files].filter((file) => {
+  // Filter file and generate direct url
+  const genFileList = (filterFunc) => {
+    let filteredList = [...files].filter((file) => filterFunc(file));
+    // Add src to support player
+    filteredList.forEach(
+      (file) => (file.src = genDownloadUrl(pathlib.join(path, file.name)))
+    );
+    return filteredList;
+  };
+
+  const genPlaylist = () =>
+    genFileList((file) => {
       let ext = pathlib.extname(file.name);
       return supportAudioType.includes(ext) || supportVideoType.includes(ext);
     });
-    // Add src to support player
-    playlist.forEach(
-      (file) => (file.src = genDownloadUrl(pathlib.join(path, file.name)))
+
+  const genImagelist = () =>
+    genFileList((file) =>
+      supportImageType.includes(pathlib.extname(file.name))
     );
-    return playlist;
-  };
 
   const downloadOrPreview = (event) => {
     let file = event.detail;
@@ -67,6 +83,10 @@
     if (supportVideoType.includes(ext) || supportAudioType.includes(ext)) {
       playing = true;
       playingFile = file;
+      return;
+    } else if (supportImageType.includes(ext)) {
+      showingImg = true;
+      img = file;
       return;
     }
     downloadFile(calcPath(file, path));
@@ -152,15 +172,21 @@
       on:moveFile={moveFileHandler}
     />
   {/if}
-  {#if playingFile}
-    <Modal
-      header="Preview"
-      body
-      size="xl"
-      isOpen={playing}
-      toggle={() => (playing = false)}
-    >
-      <Player files={genPlaylist()} selected={playingFile} on:clickDownload={downloadFileHandler} />
-    </Modal>
-  {/if}
+  <Modal
+    header="Preview"
+    body
+    size="xl"
+    isOpen={playing}
+    toggle={() => (playing = false)}
+  >
+    <Player
+      files={genPlaylist()}
+      selected={playingFile}
+      on:clickDownload={downloadFileHandler}
+    />
+  </Modal>
+
+  <Modal size="xl" isOpen={showingImg} toggle={() => (showingImg = false)}>
+    <Gallery files={genImagelist()} selected={img} />
+  </Modal>
 </div>
