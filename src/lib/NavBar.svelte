@@ -40,7 +40,17 @@
 -->
 <Navbar container={false} color="light" light expand="md">
   <Container>
-    <NavbarBrand href="/">File Station</NavbarBrand>
+    <NavbarBrand href="/">
+      <div class="d-flex align-items-center">
+        <img
+          width="20"
+          src="/streamline-icon-interface-folder-check@48x48.png"
+          alt="logo"
+          class="mx-2"
+        />
+        File Station
+      </div>
+    </NavbarBrand>
     <NavbarToggler on:click={() => (isOpen = !isOpen)} />
     <Collapse {isOpen} navbar expand="md" on:update={handleUpdate}>
       <!-- Nav's left side -->
