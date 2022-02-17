@@ -7,7 +7,7 @@
   let activeIndex = files.findIndex((v) => v.name === selected.name);
 </script>
 
-<Carousel {items} bind:activeIndex>
+<Carousel {items} bind:activeIndex interval={false}>
   <div class="carousel-inner">
     {#each items as item, index}
       <CarouselItem bind:activeIndex itemIndex={index}>
