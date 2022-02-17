@@ -141,8 +141,8 @@
     await refresh();
   };
 
-  const shareHandler = async ({ detail: { file, callback } }) => {
-    let data = await addShareFile(calcPath(file, path));
+  const shareHandler = async ({ detail: { file, password, callback } }) => {
+    let data = await addShareFile(calcPath(file, path), password);
     let url = formatShareUrl(data.url);
     callback(url);
   };

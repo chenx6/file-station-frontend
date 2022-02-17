@@ -11,6 +11,7 @@
     Button,
     ModalFooter,
     Icon,
+    Alert,
   } from "sveltestrap";
   import { createEventDispatcher } from "svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
@@ -31,6 +32,8 @@
   let newFolderName = "";
   // Share
   let sharing = false;
+  let sharingFile;
+  let sharingPassword = "";
   let shareUrl = "";
   // Move file
   let moving = false;
@@ -73,11 +76,18 @@
     });
   };
 
-  const shareFile = async (file) => {
+  // Pop up sharing window, wait for password input
+  // call `shareFile` to continue sharing
+  const startSharing = (file) => {
+    sharing = true;
+    sharingFile = file;
+  };
+
+  const shareFile = async () => {
     dispatch("share", {
-      file,
+      file: sharingFile,
+      password: sharingPassword,
       callback: (url) => {
-        sharing = true;
         shareUrl = url;
       },
     });
@@ -191,7 +201,15 @@
     isOpen={sharing}
     toggle={() => (sharing = false)}
   >
-    <p>{shareUrl}</p>
+    {#if shareUrl.length !== 0}
+      <Alert class="mb-2">{shareUrl}</Alert>
+    {/if}
+    <Input
+      class="mb-2"
+      bind:value={sharingPassword}
+      placeholder="Password(Optional)"
+    />
+    <Button on:click={shareFile}>Share</Button>
   </Modal>
   <Modal header="Move to" body isOpen={moving} toggle={() => (moving = false)}>
     <Move on:moveFile={moveFile} />
@@ -274,7 +292,7 @@
                 <DropdownItem on:click={() => deleteFile(file)}>
                   Delete
                 </DropdownItem>
-                <DropdownItem on:click={() => shareFile(file)}>
+                <DropdownItem on:click={() => startSharing(file)}>
                   Share
                 </DropdownItem>
                 <DropdownItem on:click={() => startMovingFile(file)}>

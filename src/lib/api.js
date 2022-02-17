@@ -135,7 +135,7 @@ const addShareFile = async (path, password) => {
 
 const getShareFolder = async (url, file_path, password) => {
   let query = `${base}share?url=${url}&file_path=${file_path}`;
-  if (password && password.length === 0) {
+  if (password && password.length !== 0) {
     query += `&password=${password}`;
   }
   return await fetchJsonJwt(query);
