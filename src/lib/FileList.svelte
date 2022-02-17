@@ -99,6 +99,14 @@
     dispatch("moveFile", { file: movingFile, newFolder: event.detail });
   };
 
+  const bytesToSize = (bytes) => {
+    if (bytes === 0) return "0B";
+    let k = 1024;
+    let sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    let weight = Math.floor(Math.log(bytes) / Math.log(k));
+    return (bytes / Math.pow(k, weight)).toPrecision(3) + sizes[weight];
+  };
+
   const sortFiles = (key) => {
     // Click `key` again means change order
     if (key === sortMethod.key) {
@@ -248,7 +256,7 @@
         <Col xs="2" class="invisible-sm text-truncate">
           {convertTimestamp(file.lastModifiedTime)}
         </Col>
-        <Col class="invisible-sm text-truncate">{file.size}</Col>
+        <Col class="invisible-sm text-truncate">{bytesToSize(file.size)}</Col>
         <Col>
           <div class="d-flex" on:click|stopPropagation>
             <Button color="light" on:click={() => downloadFile(file)}>
