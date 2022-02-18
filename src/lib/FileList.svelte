@@ -93,6 +93,11 @@
     });
   };
 
+  const cleanShareModal = () => {
+    sharing = false;
+    shareUrl = "";
+  };
+
   const createNewFolder = () => {
     dispatch("createFolder", { name: newFolderName });
     creatingFolder = false;
@@ -199,7 +204,7 @@
     body
     header="Share file"
     isOpen={sharing}
-    toggle={() => (sharing = false)}
+    toggle={cleanShareModal}
   >
     {#if shareUrl.length !== 0}
       <Alert class="mb-2">{shareUrl}</Alert>
