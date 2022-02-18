@@ -16,7 +16,7 @@
   import {
     createFolder,
     deleteFile,
-    fetchFolderContent,
+    getFolder,
     renameFile,
     uploadFile,
     downloadFile,
@@ -41,18 +41,18 @@
     page("/files/" + newPath);
   };
 
-  const refresh = async () => await getFolder(path);
+  const refresh = async () => await getFolderHandler(path);
 
   const searchFileHandler = async (event) => {
     files = await searchFile(event.detail);
   };
 
-  const getFolder = async (path) => {
+  const getFolderHandler = async (path) => {
     if (path.startsWith("/")) {
       path = path.replace("/", "");
     }
     loading = true;
-    let fetched = await fetchFolderContent(path);
+    let fetched = await getFolder(path);
     if (!fetched) {
       return;
     }
@@ -159,7 +159,7 @@
     page("/files/" + path);
   };
 
-  $: getFolder(path);
+  $: getFolderHandler(path);
   // $: sibilingFolders = files.filter((v) => v.type === "folder");
 </script>
 

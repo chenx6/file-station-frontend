@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { Icon, Input, Button, ListGroup, ListGroupItem } from "sveltestrap";
-  import { fetchFolderContent } from "./api.js";
+  import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
 
   const dispatch = createEventDispatcher();
@@ -21,7 +21,7 @@
     dispatch("moveFile", selectedFolder);
   };
 
-  $: fetchFolderContent(path).then(
+  $: getFolder(path).then(
     (v) => (folders = v.filter((f) => f.type === "folder"))
   );
 </script>

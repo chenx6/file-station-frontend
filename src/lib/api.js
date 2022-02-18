@@ -92,28 +92,7 @@ const downloadFile = (path) => {
   simDownload(genDownloadUrl(path), fileName);
 }
 
-const fetchFolderContent = async (path) => {
-  /*
-  let files = [];
-  switch (path) {
-    case "":
-      files = [
-        { type: "folder", name: "a", size: 0, lastModifiedTime: 0 },
-        { type: "file", name: "file", size: 0, lastModifiedTime: 0 },
-      ];
-      break;
-    case "a":
-      files = [
-        { type: "folder", name: "b", size: 0, lastModifiedTime: 0 },
-        { type: "file", name: "file in a", size: 0, lastModifiedTime: 0 },
-      ];
-      break;
-    case "a/b":
-      files = [{ type: "file", name: "file in a", size: 0, lastModifiedTime: 0 }];
-      break;
-  }
-  return files;
-  */
+const getFolder = async (path) => {
   return await fetchJsonJwt(`${base}files?name=${path}`);
 }
 
@@ -168,7 +147,7 @@ const resetPassword = async (oldPassword, newPassword) => {
 export {
   fetchJsonJwt, fetchWithJwt, genDownloadUrl,
   deleteFile, renameFile, uploadFile, downloadFile, searchFile,
-  createFolder, fetchFolderContent,
+  createFolder, getFolder,
   addShareFile, getShareFolder, getShareFile, deleteShareFile, getShareIndex,
   login, register, resetPassword
 }

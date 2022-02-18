@@ -4,7 +4,7 @@
   import Login from "./Login.svelte";
   import Share from "./Share.svelte";
   import Setting from "./Setting.svelte";
-  import { fetchFolderContent } from "./lib/api.js";
+  import { getFolder } from "./lib/api.js";
   import "bootstrap/dist/css/bootstrap.min.css";
   import "bootstrap-icons/font/bootstrap-icons.css";
   let componment, path, query;
@@ -19,7 +19,7 @@
    * Based on login status, goes to different path
    */
   const verifyLogin = async () => {
-    let response = await fetchFolderContent("");
+    let response = await getFolder("");
     if (Array.isArray(response)) {
       page("/files/");
     } else {

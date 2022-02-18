@@ -14,9 +14,11 @@ interface IShareIndex {
 
 function genDownloadUrl(path: string): string;
 async function fetchWithJwt(input: string, init: any = {});
+async function login(username: string, password: string): Promise<Response>;
+async function register(username: string, password: string): Promise<Response>;
 async function createFolder(path: string): Promise<Response>;
 async function deleteFile(path: string): Promise<Response>;
-async function fetchFolderContent(path: string): Promise<Array<IFile>>;
+async function getFolder(path: string): Promise<Array<IFile> | undefined>;
 async function renameFile(from: string, to: string): Promise<Response>;
 async function uploadFile(path: string, file: File): Promise<Response>;
 async function downloadFile(path: string);
@@ -30,11 +32,13 @@ async function resetPassword(oldPassword: string, newPassword: string): Promise<
 
 export {
     IFile,
+    login,
+    register,
     genDownloadUrl,
     fetchWithJwt,
     createFolder,
     deleteFile,
-    fetchFolderContent,
+    getFolder,
     renameFile,
     uploadFile,
     downloadFile,
