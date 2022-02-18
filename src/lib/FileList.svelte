@@ -264,7 +264,7 @@
     </Row>
   </div>
   <!-- File list -->
-  {#each files as file}
+  {#each files as file (file.name)}
     <div class="file" on:click={() => clickItem(file)}>
       <Row class="align-items-center p-2">
         <Col xs="6" class="text-truncate">
