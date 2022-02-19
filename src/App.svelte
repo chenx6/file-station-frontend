@@ -4,6 +4,7 @@
   import Login from "./Login.svelte";
   import Share from "./Share.svelte";
   import Setting from "./Setting.svelte";
+  import Footer from "./lib/Footer.svelte";
   import { getFolder } from "./lib/api.js";
   import "bootstrap/dist/css/bootstrap.min.css";
   import "bootstrap-icons/font/bootstrap-icons.css";
@@ -35,4 +36,9 @@
   page.start();
 </script>
 
-<svelte:component this={componment} {path} {query} />
+<div class="d-flex flex-column" style:height="100vh">
+  <div class="flex-shrink-0">
+    <svelte:component this={componment} {path} {query} />
+  </div>
+  <Footer />
+</div>
