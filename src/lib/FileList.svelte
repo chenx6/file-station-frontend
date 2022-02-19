@@ -26,6 +26,7 @@
   let renaming = false;
   // Uploading
   let uploading = false;
+  let uploadingProgess = -1;
   let uploadFiles;
   // New folder
   let creatingFolder = false;
@@ -72,8 +73,14 @@
   const uploadFile = () => {
     dispatch("uploadFile", {
       files: uploadFiles,
-      callback: () => (uploading = false),
+      monitor: (progress) => (uploadingProgess = progress),
     });
+  };
+
+  const uploadFinish = () => {
+    uploadingProgess = -1;
+    uploading = false;
+    dispatch("closeModal");
   };
 
   // Pop up sharing window, wait for password input
@@ -166,12 +173,10 @@
   <!-- Wrap {#if} to fix when `uploading = false`
     modal background doesn't disappear -->
   {#if uploading}
-    <Modal
-      body
-      header="Upload file"
-      isOpen={uploading}
-      toggle={() => (uploading = false)}
-    >
+    <Modal body header="Upload file" isOpen={uploading} toggle={uploadFinish}>
+      {#if uploadingProgess !== -1}
+        <Alert>Uploading {uploadingProgess}%</Alert>
+      {/if}
       <Input type="file" bind:files={uploadFiles} />
       <ModalFooter>
         <Button on:click={uploadFile}>Start upload</Button>
@@ -200,12 +205,7 @@
       <Button on:click={renameFile}>Rename</Button>
     </ModalFooter>
   </Modal>
-  <Modal
-    body
-    header="Share file"
-    isOpen={sharing}
-    toggle={cleanShareModal}
-  >
+  <Modal body header="Share file" isOpen={sharing} toggle={cleanShareModal}>
     {#if shareUrl.length !== 0}
       <Alert class="mb-2">{shareUrl}</Alert>
     {/if}

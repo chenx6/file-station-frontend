@@ -19,6 +19,7 @@
     getFolder,
     renameFile,
     uploadFile,
+    uploadFileXHR,
     downloadFile,
     searchFile,
     addShareFile,
@@ -127,13 +128,11 @@
     await refresh();
   };
 
-  const uploadFileHandler = async ({ detail: { files, callback } }) => {
+  const uploadFileHandler = async ({ detail: { files, monitor } }) => {
     if (!files || files.length === 0) {
       return;
     }
-    await uploadFile(path, files[0]);
-    callback();
-    await refresh();
+    uploadFileXHR(path, files[0], monitor);
   };
 
   const createFolderHandler = async (event) => {
@@ -181,6 +180,7 @@
       on:createFolder={createFolderHandler}
       on:share={shareHandler}
       on:moveFile={moveFileHandler}
+      on:closeModal={refresh}
     />
   {/if}
   <Modal

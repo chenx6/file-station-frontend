@@ -81,6 +81,31 @@ const uploadFile = async (path, file) => {
 }
 
 /**
+ * Upload file via XMLHttpRequest
+ * @param {string} path 
+ * @param {File} file 
+ * @param {(progress: number) => {}} monitor 
+ * @returns 
+ */
+const uploadFileXHR = (path, file, monitor) => {
+  let form = new FormData();
+  form.append("path", path);
+  form.append("file", file);
+  let token = localStorage.getItem("token");
+  let xhr = new XMLHttpRequest();
+  xhr.open("POST", `${base}file`);
+  xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+  // Calculate and upload upload status
+  xhr.upload.onprogress = (event) => (monitor(Math.round(event.loaded / event.total * 100)))
+  // Avoid XML Parsing error
+  if (xhr.overrideMimeType) {
+    xhr.overrideMimeType("application/json");
+  }
+  xhr.send(form);
+  return xhr;
+}
+
+/**
  * Generate download url based on relative path
  * @param {string} path 
  * @returns {string}
@@ -146,7 +171,7 @@ const resetPassword = async (oldPassword, newPassword) => {
 
 export {
   fetchJsonJwt, fetchWithJwt, genDownloadUrl,
-  deleteFile, renameFile, uploadFile, downloadFile, searchFile,
+  deleteFile, renameFile, uploadFile, uploadFileXHR, downloadFile, searchFile,
   createFolder, getFolder,
   addShareFile, getShareFolder, getShareFile, deleteShareFile, getShareIndex,
   login, register, resetPassword

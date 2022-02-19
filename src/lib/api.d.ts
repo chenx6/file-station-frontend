@@ -21,6 +21,7 @@ async function deleteFile(path: string): Promise<Response>;
 async function getFolder(path: string): Promise<Array<IFile> | undefined>;
 async function renameFile(from: string, to: string): Promise<Response>;
 async function uploadFile(path: string, file: File): Promise<Response>;
+function uploadFileXHR(path: string, file: File, monitor: (progress: number) => {}): XMLHttpRequest;
 async function downloadFile(path: string);
 async function searchFile(path: string): Promise<Array<IFile>>;
 async function addShareFile(path: string, password?: string?): Promise<any>;
@@ -41,6 +42,7 @@ export {
     getFolder,
     renameFile,
     uploadFile,
+    uploadFileXHR,
     downloadFile,
     searchFile,
     addShareFile,
