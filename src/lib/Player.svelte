@@ -1,7 +1,6 @@
 <script>
   import { onMount, createEventDispatcher } from "svelte";
   import { ListGroup, ListGroupItem, Row, Col, Icon } from "sveltestrap";
-  import Plyr from "plyr";
   import * as pathlib from "path-browserify";
   import { supportVideoType, supportAudioType } from "./store.js";
   import "plyr/dist/plyr.css";
@@ -52,7 +51,8 @@
 
   sources = files.map((v) => toSource(v)).filter((v) => v);
 
-  onMount(() => {
+  onMount(async () => {
+    const { default: Plyr } = await import("plyr");
     player = new Plyr("#player");
     // @ts-ignore
     player.source = toSource(selected);
