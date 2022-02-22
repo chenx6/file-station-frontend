@@ -147,9 +147,14 @@
   };
 
   const moveFileHandler = async ({ detail: { file, newFolder } }) => {
-    let oldPath = calcPath(file, path);
-    let newPath = pathlib.join(newFolder, file.name);
-    await renameFile(oldPath, newPath);
+    if (file.length === 0) {
+      return;
+    }
+    for (let f of file) {
+      let oldPath = calcPath(f, path);
+      let newPath = pathlib.join(newFolder, f.name);
+      await renameFile(oldPath, newPath);
+    }
     await refresh();
   };
 

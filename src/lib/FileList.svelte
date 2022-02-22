@@ -38,7 +38,9 @@
   let shareUrl = "";
   // Move file
   let moving = false;
-  let movingFile;
+  let movingFile = [];
+  // Selected
+  let selected = [];
 
   const clickItem = (file) => {
     switch (file.type) {
@@ -113,7 +115,12 @@
   // Pop up a select window, call `moveFile` to finish move file
   const startMovingFile = (file) => {
     moving = true;
-    movingFile = file;
+    movingFile = [file];
+  };
+
+  const startMovingFiles = () => {
+    moving = true;
+    movingFile = selected;
   };
 
   const moveFile = (event) => {
@@ -143,6 +150,15 @@
 
   const convertTimestamp = (timestamp) =>
     new Date(timestamp * 1000).toISOString();
+
+  const selectAll = () => {
+    // If has selected all file, unselect it
+    if (selected.length === files.length) {
+      selected = [];
+    } else {
+      selected = files;
+    }
+  };
 
   // Sort file order
   $: {
@@ -221,6 +237,9 @@
   </Modal>
   <!-- File list header -->
   <Row class="p-2">
+    <Col xs="auto">
+      <Input type="checkbox" class="invisible" />
+    </Col>
     <Col xs="6">
       <div class="list-header" on:click={() => sortFiles("name")}>
         File Name<OrderIndicator key="name" {sortMethod} />
@@ -242,6 +261,9 @@
   <!-- Upper folder -->
   <div class="file" on:click={() => clickItem({ name: "..", type: "folder" })}>
     <Row class="align-items-center p-2">
+      <Col xs="auto">
+        <input class="form-check-input" type="checkbox" on:click={selectAll} />
+      </Col>
       <Col xs="6"><Icon name="arrow-90deg-up" /> Upper folder</Col>
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
@@ -262,6 +284,11 @@
               <DropdownItem on:click={() => (creatingFolder = true)}>
                 Create folder
               </DropdownItem>
+              <DropdownItem>Delete selected File</DropdownItem>
+              <DropdownItem on:click={startMovingFiles}>
+                Move selected file
+              </DropdownItem>
+              <DropdownItem>Download selected file</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -272,6 +299,17 @@
   {#each files as file (file.name)}
     <div class="file" on:click={() => clickItem(file)}>
       <Row class="align-items-center p-2">
+        <Col xs="auto">
+          <div on:click|stopPropagation>
+            <!-- Use raw input element because of the bug in sveltestrap -->
+            <input
+              class="form-check-input"
+              type="checkbox"
+              bind:group={selected}
+              value={file}
+            />
+          </div>
+        </Col>
         <Col xs="6" class="text-truncate">
           <Icon name={file.type} />
           {file.name}
