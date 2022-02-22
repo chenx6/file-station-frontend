@@ -109,9 +109,22 @@
   };
 
   const deleteFileHandler = async (event) => {
-    let fullPath = calcPath(event.detail, path);
-    if (window.confirm(`Are you sure you want to delete "${fullPath}"`)) {
-      await deleteFile(fullPath);
+    let file = event.detail;
+    if (file.length === 1) {
+      let fullPath = calcPath(file[0], path);
+      if (window.confirm(`Are you sure you want to delete "${fullPath}"`)) {
+        await deleteFile(fullPath);
+      }
+    } else if (file.length > 1) {
+      if (
+        !window.confirm(`Are you sure you want to delete all of these file?`)
+      ) {
+        return;
+      }
+      for (let f of file) {
+        let fullPath = calcPath(f, path);
+        await deleteFile(fullPath);
+      }
     }
     await refresh();
   };

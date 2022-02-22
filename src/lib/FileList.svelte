@@ -58,7 +58,9 @@
     dispatch("downloadFile", file);
   };
 
-  const deleteFile = (file) => dispatch("deleteFile", file);
+  const deleteFile = (file) => dispatch("deleteFile", [file]);
+
+  const deleteFiles = () => dispatch("deleteFile", selected);
 
   // Pop up rename window, use `renameFile` to finish rename
   const startRenaming = (file) => {
@@ -284,7 +286,9 @@
               <DropdownItem on:click={() => (creatingFolder = true)}>
                 Create folder
               </DropdownItem>
-              <DropdownItem>Delete selected File</DropdownItem>
+              <DropdownItem on:click={deleteFiles}>
+                Delete selected File
+              </DropdownItem>
               <DropdownItem on:click={startMovingFiles}>
                 Move selected file
               </DropdownItem>
