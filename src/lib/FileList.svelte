@@ -286,13 +286,15 @@
               <DropdownItem on:click={() => (creatingFolder = true)}>
                 Create folder
               </DropdownItem>
-              <DropdownItem on:click={deleteFiles}>
-                Delete selected File
-              </DropdownItem>
-              <DropdownItem on:click={startMovingFiles}>
-                Move selected file
-              </DropdownItem>
-              <DropdownItem>Download selected file</DropdownItem>
+              {#if selected.length !== 0}
+                <DropdownItem on:click={deleteFiles}>
+                  Delete selected File
+                </DropdownItem>
+                <DropdownItem on:click={startMovingFiles}>
+                  Move selected file
+                </DropdownItem>
+                <DropdownItem>Download selected file</DropdownItem>
+              {/if}
             </DropdownMenu>
           </Dropdown>
         </div>
