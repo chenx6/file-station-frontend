@@ -8,6 +8,8 @@
     Row,
     Col,
     Alert,
+    TabContent,
+    TabPane,
   } from "sveltestrap";
   import NavBar from "./lib/NavBar.svelte";
   import { deleteShareFile, getShareIndex, resetPassword } from "./lib/api.js";
@@ -41,60 +43,66 @@
   <Row>
     <Col><h1>Settings</h1></Col>
   </Row>
-  <!-- Reset password field -->
-  <Row>
-    <Col><h3>Reset password</h3></Col>
-  </Row>
-  <Row>
-    <Col>
-      {#if message.length !== 0}
-        <Alert color="info">
-          {message}
-        </Alert>
-      {/if}
-    </Col>
-  </Row>
-  <Row class="py-2">
-    <Col><Input placeholder="Old password" bind:value={oldPassword} /></Col>
-  </Row>
-  <Row class="py-2">
-    <Col><Input placeholder="New password" bind:value={newPassword} /></Col>
-  </Row>
-  <Row class="py-2">
-    <Col><Button on:click={resetPasswordHandler}>Reset</Button></Col>
-  </Row>
-  <!-- Manage share folder field -->
-  <h3>Share Folders</h3>
-  <Table>
-    <thead>
-      <tr>
-        <th>Path</th>
-        <th>Url</th>
-        <th>Password</th>
-        <th />
-      </tr>
-    </thead>
-    <tbody>
-      {#each shares as share (share.url)}
-        <tr>
-          <td>{share.path}</td>
-          <td>{formatShareUrl(share.url)}</td>
-          <td>
-            {#if share.password}
-              {share.password}
-            {/if}
-          </td>
-          <td>
-            <Button
-              size="sm"
-              color="light"
-              on:click={() => deleteShareFileHandler(share.path)}
-            >
-              <Icon name="x" />
-            </Button>
-          </td>
-        </tr>
-      {/each}
-    </tbody>
-  </Table>
+  <TabContent>
+    <TabPane tabId="password" tab="Password" active>
+      <!-- Reset password field -->
+      <Row class="py-2">
+        <Col><h3>Reset password</h3></Col>
+      </Row>
+      <Row>
+        <Col>
+          {#if message.length !== 0}
+            <Alert color="info">
+              {message}
+            </Alert>
+          {/if}
+        </Col>
+      </Row>
+      <Row class="py-2">
+        <Col><Input placeholder="Old password" bind:value={oldPassword} /></Col>
+      </Row>
+      <Row class="py-2">
+        <Col><Input placeholder="New password" bind:value={newPassword} /></Col>
+      </Row>
+      <Row class="py-2">
+        <Col><Button on:click={resetPasswordHandler}>Reset</Button></Col>
+      </Row>
+    </TabPane>
+    <TabPane tabId="shareFolder" tab="Share Folder">
+      <!-- Manage share folder field -->
+      <h3 class="py-2">Share Folders</h3>
+      <Table>
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Url</th>
+            <th>Password</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {#each shares as share (share.url)}
+            <tr>
+              <td>{share.path}</td>
+              <td>{formatShareUrl(share.url)}</td>
+              <td>
+                {#if share.password}
+                  {share.password}
+                {/if}
+              </td>
+              <td>
+                <Button
+                  size="sm"
+                  color="light"
+                  on:click={() => deleteShareFileHandler(share.path)}
+                >
+                  <Icon name="x" />
+                </Button>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </Table>
+    </TabPane>
+  </TabContent>
 </Container>
