@@ -13,6 +13,7 @@
   } from "sveltestrap";
   import { createEventDispatcher } from "svelte";
   import page from "page";
+  import { navbar } from "./translate.js";
   export let path = ""; // Show path breadcrumb
   const dispatch = createEventDispatcher();
   let isOpen = false; // Indicate the menu
@@ -60,7 +61,7 @@
           <div class="breadcrumb align-items-center">
             <div class="breadcrumb-item">
               <span class="link-primary" on:click={() => gotoFolderIndex(0)}>
-                Home
+                {$navbar.home}
               </span>
             </div>
             {#each folders as folder, i}
@@ -84,9 +85,12 @@
       <div class="d-flex">
         <InputGroup>
           <Input type="text" bind:value={searchContent} />
-          <Button on:click={search}>Search</Button>
+          <Button on:click={search}>{$navbar.search}</Button>
         </InputGroup>
-        <Button class="ms-2" on:click={() => page("/setting")}>Settings</Button>
+        <!-- Use dirty patch "nowrap" to fix chinese rendering issue -->
+        <Button class="ms-2" on:click={() => page("/setting")} style="white-space: nowrap;">
+          {$navbar.settings}
+        </Button>
       </div>
     </Collapse>
   </Container>

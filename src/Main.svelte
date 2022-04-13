@@ -26,6 +26,7 @@
     genDownloadUrl,
   } from "./lib/api.js";
   import { calcPath, formatShareUrl, getPathByIndex } from "./lib/path.js";
+  import { main } from "./lib/translate.js";
   export let path;
 
   let files = [];
@@ -112,13 +113,11 @@
     let file = event.detail;
     if (file.length === 1) {
       let fullPath = calcPath(file[0], path);
-      if (window.confirm(`Are you sure you want to delete "${fullPath}"`)) {
+      if (window.confirm(`${$main.areYouSure} "${fullPath}"`)) {
         await deleteFile(fullPath);
       }
     } else if (file.length > 1) {
-      if (
-        !window.confirm(`Are you sure you want to delete all of these file?`)
-      ) {
+      if (!window.confirm($main.areYouSureAll)) {
         return;
       }
       for (let f of file) {

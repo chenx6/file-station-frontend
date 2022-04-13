@@ -3,6 +3,7 @@
   import { Icon, Input, Button, ListGroup, ListGroupItem } from "sveltestrap";
   import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
+  import { move } from "./translate.js";
 
   const dispatch = createEventDispatcher();
   let path = ""; // folder path
@@ -37,7 +38,9 @@
     <ListGroupItem action>
       <div class="d-flex">
         <Icon name="arrow-90deg-up" class="pe-2" />
-        <div on:click={() => clickFolder({ name: ".." })}>Upper folder</div>
+        <div on:click={() => clickFolder({ name: ".." })}>
+          {$move.upperFolder}
+        </div>
       </div>
     </ListGroupItem>
     {#each folders as folder}
@@ -49,7 +52,7 @@
       </ListGroupItem>
     {/each}
   </ListGroup>
-  <Button on:click={selectFolder}>Select</Button>
+  <Button on:click={selectFolder}>{$move.select}</Button>
 </div>
 
 <style>

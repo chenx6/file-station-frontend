@@ -1,0 +1,60 @@
+{
+    "main": {
+        "preview": "预览",
+        "areYouSure": "你确定要删除",
+        "areYouSureAll": "你确定要删除所有选中的文件吗？"
+    },
+    "setting": {
+        "password": "密码",
+        "oldPassword": "旧密码",
+        "newPassword": "新密码",
+        "shareFolder": "分享文件夹"
+    },
+    "share": {
+        "wrongPassword": "密码错误",
+        "passwordRequired": "需要密码"
+    },
+    "fileList": {
+        "uploading": "上传中",
+        "startUpload": "开始上传",
+        "uploadFile": "上传文件",
+        "createFolder": "新建文件夹",
+        "save": "保存",
+        "renameFile": "重命名文件",
+        "shareFile": "分享文件",
+        "moveTo": "移动文件",
+        "passwordOptional": "密码（可选）",
+        "fileName": "文件名",
+        "lastModifiedTime": "上次修改时间",
+        "size": "大小",
+        "operation": "操作",
+        "upperFolder": "上一层目录",
+        "rename": "重命名",
+        "delete": "删除",
+        "share": "分享",
+        "move": "移动",
+        "deleteSelectedFile": "删除选定的文件",
+        "moveSelectedFile": "移动选定的文件",
+        "downloadSelectedFile": "下载选定的文件"
+    },
+    "footer": {
+        "poweredBy": "由",
+        "andLove": "和 💖 驱动"
+    },
+    "navbar": {
+        "home": "根目录",
+        "search": "搜索",
+        "settings": "设置"
+    },
+    "move": {
+        "select": "选择",
+        "upperFolder": "上一层目录"
+    },
+    "login": {
+        "username": "用户名",
+        "password": "密码",
+        "login": "登陆",
+        "register": "注册",
+        "justANetDist": "只是个网盘"
+    }
+}

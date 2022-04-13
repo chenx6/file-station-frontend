@@ -16,6 +16,7 @@
   import { createEventDispatcher } from "svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";
+  import { fileList } from "./translate.js";
   export let files = [];
   const dispatch = createEventDispatcher();
   // Sorting
@@ -191,50 +192,65 @@
   <!-- Wrap {#if} to fix when `uploading = false`
     modal background doesn't disappear -->
   {#if uploading}
-    <Modal body header="Upload file" isOpen={uploading} toggle={uploadFinish}>
+    <Modal
+      body
+      header={$fileList.uploadFile}
+      isOpen={uploading}
+      toggle={uploadFinish}
+    >
       {#if uploadingProgess !== -1}
-        <Alert>Uploading {uploadingProgess}%</Alert>
+        <Alert>{$fileList.uploading} {uploadingProgess}%</Alert>
       {/if}
       <Input type="file" bind:files={uploadFiles} />
       <ModalFooter>
-        <Button on:click={uploadFile}>Start upload</Button>
+        <Button on:click={uploadFile}>{$fileList.startUpload}</Button>
       </ModalFooter>
     </Modal>
   {/if}
   <Modal
     body
-    header="Create folder"
+    header={$fileList.createFolder}
     isOpen={creatingFolder}
     toggle={() => (creatingFolder = false)}
   >
     <Input type="text" bind:value={newFolderName} />
     <ModalFooter>
-      <Button on:click={createNewFolder}>Save</Button>
+      <Button on:click={createNewFolder}>{$fileList.save}</Button>
     </ModalFooter>
   </Modal>
   <Modal
     body
-    header="Rename file"
+    header={$fileList.renameFile}
     isOpen={renaming}
     toggle={() => (renaming = false)}
   >
     <Input type="text" bind:value={newName} />
     <ModalFooter>
-      <Button on:click={renameFile}>Rename</Button>
+      <Button on:click={renameFile}>{$fileList.rename}</Button>
     </ModalFooter>
   </Modal>
-  <Modal body header="Share file" isOpen={sharing} toggle={cleanShareModal}>
+  <Modal
+    body
+    header={$fileList.shareFile}
+    isOpen={sharing}
+    toggle={cleanShareModal}
+  >
     {#if shareUrl.length !== 0}
       <Alert class="mb-2">{shareUrl}</Alert>
     {/if}
     <Input
       class="mb-2"
       bind:value={sharingPassword}
-      placeholder="Password(Optional)"
+      placeholder={$fileList.passwordOptional}
     />
-    <Button on:click={shareFile}>Share</Button>
+    <Button on:click={shareFile}>{$fileList.share}</Button>
   </Modal>
-  <Modal header="Move to" body isOpen={moving} toggle={() => (moving = false)}>
+  <Modal
+    header={$fileList.moveTo}
+    body
+    isOpen={moving}
+    toggle={() => (moving = false)}
+  >
     <Move on:moveFile={moveFile} />
   </Modal>
   <!-- File list header -->
@@ -244,21 +260,24 @@
     </Col>
     <Col xs="6">
       <div class="list-header" on:click={() => sortFiles("name")}>
-        File Name<OrderIndicator key="name" {sortMethod} />
+        {$fileList.fileName}<OrderIndicator key="name" {sortMethod} />
       </div>
     </Col>
     <!-- In mobile, hide time and size -->
     <Col xs="2" class="invisible-sm">
       <div class="list-header" on:click={() => sortFiles("lastModifiedTime")}>
-        Last modified time<OrderIndicator key="lastModifiedTime" {sortMethod} />
+        {$fileList.lastModifiedTime}<OrderIndicator
+          key="lastModifiedTime"
+          {sortMethod}
+        />
       </div>
     </Col>
     <Col class="invisible-sm">
       <div class="list-header" on:click={() => sortFiles("size")}>
-        Size<OrderIndicator key="size" {sortMethod} />
+        {$fileList.lastModifiedTime}<OrderIndicator key="size" {sortMethod} />
       </div>
     </Col>
-    <Col>Operation</Col>
+    <Col>{$fileList.operation}</Col>
   </Row>
   <!-- Upper folder -->
   <div class="file" on:click={() => clickItem({ name: "..", type: "folder" })}>
@@ -266,7 +285,7 @@
       <Col xs="auto">
         <input class="form-check-input" type="checkbox" on:click={selectAll} />
       </Col>
-      <Col xs="6"><Icon name="arrow-90deg-up" /> Upper folder</Col>
+      <Col xs="6"><Icon name="arrow-90deg-up" /> {$fileList.upperFolder}</Col>
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
       <Col>
@@ -281,19 +300,19 @@
             </DropdownToggle>
             <DropdownMenu>
               <DropdownItem on:click={() => (uploading = true)}>
-                Upload file
+                {$fileList.uploadFile}
               </DropdownItem>
               <DropdownItem on:click={() => (creatingFolder = true)}>
-                Create folder
+                {$fileList.createFolder}
               </DropdownItem>
               {#if selected.length !== 0}
                 <DropdownItem on:click={deleteFiles}>
-                  Delete selected File
+                  {$fileList.deleteSelectedFile}
                 </DropdownItem>
                 <DropdownItem on:click={startMovingFiles}>
-                  Move selected file
+                  {$fileList.moveSelectedFile}
                 </DropdownItem>
-                <DropdownItem>Download selected file</DropdownItem>
+                <DropdownItem>{$fileList.downloadSelectedFile}</DropdownItem>
               {/if}
             </DropdownMenu>
           </Dropdown>
@@ -336,16 +355,16 @@
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem on:click={() => startRenaming(file)}>
-                  Rename
+                  {$fileList.rename}
                 </DropdownItem>
                 <DropdownItem on:click={() => deleteFile(file)}>
-                  Delete
+                  {$fileList.delete}
                 </DropdownItem>
                 <DropdownItem on:click={() => startSharing(file)}>
-                  Share
+                  {$fileList.share}
                 </DropdownItem>
                 <DropdownItem on:click={() => startMovingFile(file)}>
-                  Move
+                  {$fileList.move}
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>

@@ -3,6 +3,7 @@
   import { Input, Label, Container, Button, Alert } from "sveltestrap";
   import { register, login } from "./lib/api.js";
   import page from "page";
+  import { login as loginTr } from "./lib/translate.js";
 
   let alert = { message: "", color: "" };
   let username, password;
@@ -35,13 +36,13 @@
       </Alert>
     {/if}
     <h3>File station</h3>
-    <p>Just a net disk</p>
-    <Label for="username">Username</Label>
+    <p>{$loginTr.justANetDist}</p>
+    <Label for="username">{$loginTr.username}</Label>
     <Input type="text" bind:value={username} />
-    <Label for="password">Password</Label>
+    <Label for="password">{$loginTr.password}</Label>
     <Input type="password" class="mb-3" bind:value={password} />
-    <Button on:click={loginHandler}>Login</Button>
-    <Button on:click={registerHandler}>Register</Button>
+    <Button on:click={loginHandler}>{$loginTr.login}</Button>
+    <Button on:click={registerHandler}>{$loginTr.register}</Button>
   </main>
 </Container>
 
