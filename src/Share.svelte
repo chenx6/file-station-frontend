@@ -82,6 +82,6 @@
       <Spinner />
     </div>
   {:else}
-    <FileList {files} on:clickFolder={getFolder} on:clickFile={getFile} />
+    <FileList {files} on:clickFolder={getFolder} on:downloadFile={getFile} />
   {/if}
 </Container>
