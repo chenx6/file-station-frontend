@@ -19,9 +19,13 @@ export const main = i18n("main", {
 
 export const setting = i18n("setting", {
     "password": "Password",
+    "resetPassword": "Reset password",
     "oldPassword": "Old password",
     "newPassword": "New password",
-    "shareFolder": "Share folder"
+    "reset": "Reset",
+    "shareFolder": "Share folder",
+    "path": "Path",
+    "URL": "URL"
 })
 
 export const share = i18n("share", {

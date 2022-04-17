@@ -6,9 +6,13 @@
     },
     "setting": {
         "password": "密码",
+        "resetPassword": "重置密码",
         "oldPassword": "旧密码",
         "newPassword": "新密码",
-        "shareFolder": "分享文件夹"
+        "reset": "Reset",
+        "shareFolder": "分享文件夹",
+        "path": "路径",
+        "URL": "URL"
     },
     "share": {
         "wrongPassword": "密码错误",

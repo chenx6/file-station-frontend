@@ -15,6 +15,7 @@
   import { deleteShareFile, getShareIndex, resetPassword } from "./lib/api.js";
   import { formatShareUrl } from "./lib/path.js";
   import { onMount } from "svelte";
+  import { setting } from "./lib/translate.js";
   let shares = [];
   let oldPassword, newPassword;
   let message = "";
@@ -44,10 +45,10 @@
     <Col><h1>Settings</h1></Col>
   </Row>
   <TabContent>
-    <TabPane tabId="password" tab="Password" active>
+    <TabPane tabId="password" tab="{$setting.password}" active>
       <!-- Reset password field -->
       <Row class="py-2">
-        <Col><h3>Reset password</h3></Col>
+        <Col><h3>{$setting.resetPassword}</h3></Col>
       </Row>
       <Row>
         <Col>
@@ -59,24 +60,30 @@
         </Col>
       </Row>
       <Row class="py-2">
-        <Col><Input placeholder="Old password" bind:value={oldPassword} /></Col>
+        <Col>
+          <Input placeholder={$setting.oldPassword} bind:value={oldPassword} />
+        </Col>
       </Row>
       <Row class="py-2">
-        <Col><Input placeholder="New password" bind:value={newPassword} /></Col>
+        <Col>
+          <Input placeholder={$setting.newPassword} bind:value={newPassword} />
+        </Col>
       </Row>
       <Row class="py-2">
-        <Col><Button on:click={resetPasswordHandler}>Reset</Button></Col>
+        <Col>
+          <Button on:click={resetPasswordHandler}>{$setting.reset}</Button>
+        </Col>
       </Row>
     </TabPane>
-    <TabPane tabId="shareFolder" tab="Share Folder">
+    <TabPane tabId="shareFolder" tab="{$setting.shareFolder}">
       <!-- Manage share folder field -->
-      <h3 class="py-2">Share Folders</h3>
+      <h3 class="py-2">{$setting.shareFolder}</h3>
       <Table>
         <thead>
           <tr>
-            <th>Path</th>
-            <th>Url</th>
-            <th>Password</th>
+            <th>{$setting.path}</th>
+            <th>{$setting.URL}</th>
+            <th>{$setting.password}</th>
             <th />
           </tr>
         </thead>
