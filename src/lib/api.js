@@ -145,7 +145,7 @@ const getShareFolder = async (url, file_path, password) => {
 
 const getShareFile = async (url, file_name, file_path, password) => {
   let query = `${base}/share?url=${url}&file_path=${file_path}&download=true`;
-  if (password && password.length === 0) {
+  if (password && password.length !== 0) {
     query += `&password=${password}`;
   }
   simDownload(query, file_name);
