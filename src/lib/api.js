@@ -1,6 +1,6 @@
 import * as pathlib from "path-browserify";
 
-const base = "/api/v1/";
+const base = "/api/v1";
 const jsonContent = { "Content-Type": "application/json" };
 
 /**
@@ -50,7 +50,7 @@ const simDownload = (url, fileName) => {
 }
 
 const login = async (username, password) => {
-  return await fetch(`${base}auth`, {
+  return await fetch(`${base}/auth`, {
     headers: jsonContent,
     body: JSON.stringify({ username, password }),
     method: "POST",
@@ -58,7 +58,7 @@ const login = async (username, password) => {
 }
 
 const register = async (username, password) => {
-  return await fetch(`${base}users`, {
+  return await fetch(`${base}/users`, {
     headers: jsonContent,
     body: JSON.stringify({ username, password }),
     method: "POST",
@@ -66,18 +66,17 @@ const register = async (username, password) => {
 }
 
 const deleteFile = async (path) => {
-  return await fetchWithJwt(`${base}file?name=${path}`, { method: "DELETE" });
+  return await fetchWithJwt(`${base}/file/${path}`, { method: "DELETE" });
 }
 
 const renameFile = async (from, to) => {
-  return await fetchWithJwt(`${base}file?from=${from}&to=${to}`, { method: "PATCH" });
+  return await fetchWithJwt(`${base}/file/${from}?to=${to}`, { method: "PATCH" });
 }
 
 const uploadFile = async (path, file) => {
   let form = new FormData();
-  form.append("path", path);
   form.append("file", file);
-  return await fetchWithJwt(`${base}file`, { body: form, method: "POST" });
+  return await fetchWithJwt(`${base}/file/${path}`, { body: form, method: "POST" });
 }
 
 /**
@@ -89,11 +88,10 @@ const uploadFile = async (path, file) => {
  */
 const uploadFileXHR = (path, file, monitor) => {
   let form = new FormData();
-  form.append("path", path);
   form.append("file", file);
   let token = localStorage.getItem("token");
   let xhr = new XMLHttpRequest();
-  xhr.open("POST", `${base}file`);
+  xhr.open("POST", `${base}/file/${path}`);
   xhr.setRequestHeader("Authorization", `Bearer ${token}`);
   // Calculate and upload upload status
   xhr.upload.onprogress = (event) => (monitor(Math.round(event.loaded / event.total * 100)))
@@ -110,7 +108,7 @@ const uploadFileXHR = (path, file, monitor) => {
  * @param {string} path 
  * @returns {string}
  */
-const genDownloadUrl = (path) => `${base}file?name=${path}`
+const genDownloadUrl = (path) => `${base}/file/${path}`
 
 const downloadFile = (path) => {
   let fileName = pathlib.basename(path)
@@ -118,19 +116,19 @@ const downloadFile = (path) => {
 }
 
 const getFolder = async (path) => {
-  return await fetchJsonJwt(`${base}files?name=${path}`);
+  return await fetchJsonJwt(`${base}/files/${path}`);
 }
 
 const createFolder = async (path) => {
-  return await fetchWithJwt(`${base}files?name=${path}`, { method: "POST" });
+  return await fetchWithJwt(`${base}/files/${path}`, { method: "POST" });
 }
 
 const searchFile = async (path) => {
-  return await fetchJsonJwt(`${base}search?name=${path}`);
+  return await fetchJsonJwt(`${base}/search?name=${path}`);
 }
 
 const addShareFile = async (path, password) => {
-  let url = `${base}share?path=${path}`;
+  let url = `${base}/share?path=${path}`;
   if (password) {
     url += `&password=${password}`
   }
@@ -138,7 +136,7 @@ const addShareFile = async (path, password) => {
 }
 
 const getShareFolder = async (url, file_path, password) => {
-  let query = `${base}share?url=${url}&file_path=${file_path}`;
+  let query = `${base}/share?url=${url}&file_path=${file_path}`;
   if (password && password.length !== 0) {
     query += `&password=${password}`;
   }
@@ -146,7 +144,7 @@ const getShareFolder = async (url, file_path, password) => {
 }
 
 const getShareFile = async (url, file_name, file_path, password) => {
-  let query = `${base}share?url=${url}&file_path=${file_path}&download=true`;
+  let query = `${base}/share?url=${url}&file_path=${file_path}&download=true`;
   if (password && password.length === 0) {
     query += `&password=${password}`;
   }
@@ -154,15 +152,15 @@ const getShareFile = async (url, file_name, file_path, password) => {
 }
 
 const deleteShareFile = async (path) => {
-  return await fetchWithJwt(`${base}share?path=${path}`, { method: "DELETE" });
+  return await fetchWithJwt(`${base}/share?path=${path}`, { method: "DELETE" });
 }
 
 const getShareIndex = async () => {
-  return await fetchJsonJwt(`${base}shares`);
+  return await fetchJsonJwt(`${base}/shares`);
 }
 
 const resetPassword = async (oldPassword, newPassword) => {
-  return await fetchWithJwt(`${base}user`, {
+  return await fetchWithJwt(`${base}/user`, {
     method: "PATCH",
     headers: jsonContent,
     body: JSON.stringify({ oldPassword, newPassword })
