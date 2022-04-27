@@ -30,7 +30,11 @@ const fetchWithJwt = async (input, init = {}) => {
  */
 const fetchJsonJwt = async (input, init = {}) => {
   let response = await fetchWithJwt(input, init);
-  if (response.status !== 200) {
+  if (!response.ok ||
+    !response
+      .headers
+      .get("Content-Type")
+      .includes("application/json")) {
     return;
   }
   return await response.json();
