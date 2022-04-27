@@ -42,10 +42,10 @@
 <NavBar />
 <Container>
   <Row>
-    <Col><h1>Settings</h1></Col>
+    <Col><h1>{$setting.settings}</h1></Col>
   </Row>
   <TabContent>
-    <TabPane tabId="password" tab="{$setting.password}" active>
+    <TabPane tabId="password" tab={$setting.password} active>
       <!-- Reset password field -->
       <Row class="py-2">
         <Col><h3>{$setting.resetPassword}</h3></Col>
@@ -75,7 +75,7 @@
         </Col>
       </Row>
     </TabPane>
-    <TabPane tabId="shareFolder" tab="{$setting.shareFolder}">
+    <TabPane tabId="shareFolder" tab={$setting.shareFolder}>
       <!-- Manage share folder field -->
       <h3 class="py-2">{$setting.shareFolder}</h3>
       <Table>

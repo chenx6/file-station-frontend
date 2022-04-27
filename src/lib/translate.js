@@ -18,6 +18,7 @@ export const main = i18n("main", {
 });
 
 export const setting = i18n("setting", {
+    "settings": "Settings",
     "password": "Password",
     "resetPassword": "Reset password",
     "oldPassword": "Old password",
@@ -30,7 +31,8 @@ export const setting = i18n("setting", {
 
 export const share = i18n("share", {
     "wrongPassword": "Wrong password",
-    "passwordRequired": "Require password"
+    "passwordRequired": "Require password",
+    "confirm": "Confirm"
 })
 
 export const fileList = i18n("fileList", {

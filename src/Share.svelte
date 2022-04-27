@@ -5,6 +5,7 @@
   import NavBar from "./lib/NavBar.svelte";
   import { getShareFolder, getShareFile } from "./lib/api.js";
   import { calcPath, getPathByIndex } from "./lib/path.js";
+  import { share } from "./lib/translate.js";
   export let query = ""; // Get url and password
   let url = "";
   let filePath = ""; // Relative to share folder's root
@@ -46,7 +47,7 @@
       password = inputPassword;
       return;
     }
-    errorMessage = "Wrong password";
+    errorMessage = $share.wrongPassword;
   };
 
   const gotoIndexHandler = (event) => {
@@ -70,12 +71,12 @@
 
 <NavBar path={filePath} on:gotoIndex={gotoIndexHandler} />
 <Container>
-  <Modal header="Password required" body isOpen={requirePassword}>
+  <Modal header={$share.passwordRequired} body isOpen={requirePassword}>
     {#if errorMessage.length !== 0}
       <Alert color="warning" class="mb-2">{errorMessage}</Alert>
     {/if}
     <Input class="mb-2" bind:value={inputPassword} />
-    <Button on:click={checkPassword}>Confirm</Button>
+    <Button on:click={checkPassword}>{$share.confirm}</Button>
   </Modal>
   {#if loading}
     <div class="d-flex justify-content-center">
