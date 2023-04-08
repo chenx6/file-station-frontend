@@ -67,7 +67,8 @@ export const footer = i18n("footer", {
 export const navbar = i18n("navbar", {
     "home": "Home",
     "search": "Search",
-    "settings": "Settings"
+    "settings": "Settings",
+    "logout": "Logout",
 });
 
 export const move = i18n("move", {

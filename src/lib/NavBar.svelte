@@ -31,6 +31,11 @@
     dispatch("gotoIndex", idx);
   }
 
+  function logout() {
+    localStorage.removeItem("token");
+    page("/login");
+  }
+
   $: folders = path.split("/");
 </script>
 
@@ -87,10 +92,15 @@
           <Input type="text" bind:value={searchContent} />
           <Button on:click={search}>{$navbar.search}</Button>
         </InputGroup>
-        <!-- Use dirty patch "nowrap" to fix chinese rendering issue -->
-        <Button class="ms-2" on:click={() => page("/setting")} style="white-space: nowrap;">
+        <button
+          class="btn btn-secondary ms-2 chinese"
+          on:click={() => page("/setting")}
+        >
           {$navbar.settings}
-        </Button>
+        </button>
+        <button class="btn btn-secondary ms-2 chinese" on:click={logout}>
+          {$navbar.logout}
+        </button>
       </div>
     </Collapse>
   </Container>
@@ -99,5 +109,10 @@
 <style>
   .breadcrumb {
     margin-bottom: 0;
+  }
+
+  /* Use dirty patch "nowrap" to fix chinese rendering issue */
+  .chinese {
+    white-space: nowrap;
   }
 </style>
