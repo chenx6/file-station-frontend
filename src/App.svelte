@@ -7,7 +7,6 @@
   import Footer from "./lib/Footer.svelte";
   import { getFolder } from "./lib/api.js";
   import "bootstrap/dist/css/bootstrap.min.css";
-  import "bootstrap-icons/font/bootstrap-icons.css";
   let componment = $state(), path = $state(), query = $state();
 
   const setParams = (ctx, next) => {

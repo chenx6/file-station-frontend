@@ -1,5 +1,5 @@
 <script>
-  import { Icon } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   let { key, sortMethod } = $props();
 </script>
 

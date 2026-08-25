@@ -1,5 +1,6 @@
 <script>
-  import { Icon, Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
+  import { Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
   import { move } from "./translate.js";

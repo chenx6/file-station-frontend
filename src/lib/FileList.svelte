@@ -10,9 +10,9 @@
     Input,
     Button,
     ModalFooter,
-    Icon,
     Alert,
   } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";
   import { fileList } from "./translate.js";

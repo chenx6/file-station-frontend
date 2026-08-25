@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
-  import { ListGroup, ListGroupItem, Row, Col, Icon } from "@sveltestrap/sveltestrap";
+  import { ListGroup, ListGroupItem, Row, Col } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import * as pathlib from "path-browserify";
   import { supportVideoType, supportAudioType } from "./store.js";
   import "plyr/dist/plyr.css";

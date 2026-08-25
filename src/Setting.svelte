@@ -3,7 +3,6 @@
     Container,
     Table,
     Button,
-    Icon,
     Input,
     Row,
     Col,
@@ -11,6 +10,7 @@
     TabContent,
     TabPane,
   } from "@sveltestrap/sveltestrap";
+  import Icon from "./lib/Icon.svelte";
   import NavBar from "./lib/NavBar.svelte";
   import { deleteShareFile, getShareIndex, resetPassword } from "./lib/api.js";
   import { formatShareUrl } from "./lib/path.js";
