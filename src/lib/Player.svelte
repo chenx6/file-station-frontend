@@ -1,6 +1,4 @@
 <script>
-  import { stopPropagation } from 'svelte/legacy';
-
   import { onMount, createEventDispatcher } from "svelte";
   import { ListGroup, ListGroupItem, Row, Col, Icon } from "@sveltestrap/sveltestrap";
   import * as pathlib from "path-browserify";
@@ -89,7 +87,10 @@
             <div>{source.title}</div>
             <button
               class="btn"
-              onclick={stopPropagation(() => clickDownload(source.file))}
+              onclick={(event) => {
+                event.stopPropagation();
+                clickDownload(source.file);
+              }}
             >
               <Icon name="download" />
             </button>

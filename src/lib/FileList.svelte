@@ -1,7 +1,4 @@
 <script>
-  import { createBubbler, stopPropagation } from 'svelte/legacy';
-
-  const bubble = createBubbler();
   import {
     Col,
     Row,
@@ -292,7 +289,7 @@
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
       <Col>
-        <div class="d-flex" onclick={stopPropagation(bubble('click'))}>
+        <div class="d-flex" onclick={(event) => event.stopPropagation()}>
           <Button class="invisible" color="light">
             <Icon name="download" />
           </Button>
@@ -328,7 +325,7 @@
     <div class="file" onclick={() => clickItem(file)}>
       <Row class="align-items-center p-2">
         <Col xs="auto">
-          <div onclick={stopPropagation(bubble('click'))}>
+          <div onclick={(event) => event.stopPropagation()}>
             <!-- Use raw input element because of the bug in sveltestrap -->
             <input
               class="form-check-input"
@@ -347,7 +344,7 @@
         </Col>
         <Col class="invisible-sm text-truncate">{bytesToSize(file.size)}</Col>
         <Col>
-          <div class="d-flex" onclick={stopPropagation(bubble('click'))}>
+          <div class="d-flex" onclick={(event) => event.stopPropagation()}>
             <Button color="light" on:click={() => downloadFile(file)}>
               <Icon name="download" />
             </Button>
