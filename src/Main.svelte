@@ -1,5 +1,5 @@
 <script>
-  import { Spinner, Modal } from "sveltestrap";
+  import { Spinner, Modal } from "@sveltestrap/sveltestrap";
   import page from "page";
   import * as pathlib from "path-browserify";
   import FileList from "./lib/FileList.svelte";
@@ -27,26 +27,26 @@
   } from "./lib/api.js";
   import { calcPath, formatShareUrl, getPathByIndex } from "./lib/path.js";
   import { main } from "./lib/translate.js";
-  export let path;
+  let { path = $bindable() } = $props();
 
-  let files = [];
-  let loading = false; // Showing loading spinner
-  let playing = false, // Video/Audio playing
-    playingFile;
-  let showingImg = false,
-    img;
-  let showingText = false,
-    textFile;
+  let files = $state([]);
+  let loading = $state(false); // Showing loading spinner
+  let playing = $state(false), // Video/Audio playing
+    playingFile = $state();
+  let showingImg = $state(false),
+    img = $state();
+  let showingText = $state(false),
+    textFile = $state();
 
-  const gotoFolder = (event) => {
-    let newPath = calcPath(event.detail, path);
+  const gotoFolder = (file) => {
+    let newPath = calcPath(file, path);
     page("/files/" + newPath);
   };
 
   const refresh = async () => await getFolderHandler(path);
 
-  const searchFileHandler = async (event) => {
-    files = await searchFile(event.detail);
+  const searchFileHandler = async (searchContent) => {
+    files = await searchFile(searchContent);
   };
 
   const getFolderHandler = async (path) => {
@@ -85,8 +85,7 @@
       supportImageType.includes(pathlib.extname(file.name))
     );
 
-  const downloadOrPreview = (event) => {
-    let file = event.detail;
+  const downloadOrPreview = (file) => {
     let ext = pathlib.extname(file.name);
     if (supportVideoType.includes(ext) || supportAudioType.includes(ext)) {
       playing = true;
@@ -105,12 +104,11 @@
     downloadFile(calcPath(file, path));
   };
 
-  const downloadFileHandler = (event) => {
-    downloadFile(calcPath(event.detail, path));
+  const downloadFileHandler = (file) => {
+    downloadFile(calcPath(file, path));
   };
 
-  const deleteFileHandler = async (event) => {
-    let file = event.detail;
+  const deleteFileHandler = async (file) => {
     if (file.length === 1) {
       let fullPath = calcPath(file[0], path);
       if (window.confirm(`${$main.areYouSure} "${fullPath}"`)) {
@@ -128,7 +126,7 @@
     await refresh();
   };
 
-  const renameFileHandler = async ({ detail: { file, newName } }) => {
+  const renameFileHandler = async ({ file, newName }) => {
     let oldPath = calcPath(file, path);
     let newPath = pathlib.format({
       ...pathlib.parse(oldPath),
@@ -140,25 +138,25 @@
     await refresh();
   };
 
-  const uploadFileHandler = async ({ detail: { files, monitor } }) => {
+  const uploadFileHandler = async ({ files, monitor }) => {
     if (!files || files.length === 0) {
       return;
     }
     uploadFileXHR(path, files[0], monitor);
   };
 
-  const createFolderHandler = async (event) => {
-    await createFolder(calcPath(event.detail, path));
+  const createFolderHandler = async (folder) => {
+    await createFolder(calcPath(folder, path));
     await refresh();
   };
 
-  const shareHandler = async ({ detail: { file, password, callback } }) => {
+  const shareHandler = async ({ file, password, callback }) => {
     let data = await addShareFile(calcPath(file, path), password);
     let url = formatShareUrl(data.url);
     callback(url);
   };
 
-  const moveFileHandler = async ({ detail: { file, newFolder } }) => {
+  const moveFileHandler = async ({ file, newFolder }) => {
     if (file.length === 0) {
       return;
     }
@@ -170,16 +168,18 @@
     await refresh();
   };
 
-  const gotoIndexHandler = async (event) => {
-    path = getPathByIndex(path, event.detail);
+  const gotoIndexHandler = async (index) => {
+    path = getPathByIndex(path, index);
     page("/files/" + path);
   };
 
-  $: getFolderHandler(path);
+  $effect(() => {
+    void getFolderHandler(path);
+  });
   // $: sibilingFolders = files.filter((v) => v.type === "folder");
 </script>
 
-<NavBar {path} on:search={searchFileHandler} on:gotoIndex={gotoIndexHandler} />
+<NavBar {path} onSearch={searchFileHandler} onGotoIndex={gotoIndexHandler} />
 <div class="container">
   {#if loading}
     <div class="d-flex justify-content-center">
@@ -188,16 +188,16 @@
   {:else}
     <FileList
       {files}
-      on:clickFile={downloadOrPreview}
-      on:downloadFile={downloadFileHandler}
-      on:deleteFile={deleteFileHandler}
-      on:renameFile={renameFileHandler}
-      on:uploadFile={uploadFileHandler}
-      on:clickFolder={gotoFolder}
-      on:createFolder={createFolderHandler}
-      on:share={shareHandler}
-      on:moveFile={moveFileHandler}
-      on:closeModal={refresh}
+      onClickFile={downloadOrPreview}
+      onDownloadFile={downloadFileHandler}
+      onDeleteFile={deleteFileHandler}
+      onRenameFile={renameFileHandler}
+      onUploadFile={uploadFileHandler}
+      onClickFolder={gotoFolder}
+      onCreateFolder={createFolderHandler}
+      onShare={shareHandler}
+      onMoveFile={moveFileHandler}
+      onCloseModal={refresh}
     />
   {/if}
   <Modal
@@ -210,7 +210,7 @@
     <Player
       files={genPlaylist()}
       selected={playingFile}
-      on:clickDownload={downloadFileHandler}
+      onClickDownload={downloadFileHandler}
     />
   </Modal>
   <Modal

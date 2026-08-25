@@ -10,25 +10,23 @@
     Input,
     InputGroup,
     Button,
-  } from "sveltestrap";
-  import { createEventDispatcher } from "svelte";
+  } from "@sveltestrap/sveltestrap";
   import page from "page";
   import { navbar } from "./translate.js";
-  export let path = ""; // Show path breadcrumb
-  const dispatch = createEventDispatcher();
-  let isOpen = false; // Indicate the menu
-  let searchContent = "";
+  /**
+   * @typedef {Object} Props
+   * @property {string} [path] - Show path breadcrumb
+   * @property {(searchContent: string) => void} [onSearch]
+   * @property {(index: number) => void} [onGotoIndex]
+   */
+
+  /** @type {Props} */
+  let { path = "", onSearch, onGotoIndex } = $props();
+  let isOpen = $state(false); // Indicate the menu
+  let searchContent = $state("");
 
   function handleUpdate(event) {
     isOpen = event.detail.isOpen;
-  }
-
-  function search() {
-    dispatch("search", searchContent);
-  }
-
-  function gotoFolderIndex(idx) {
-    dispatch("gotoIndex", idx);
   }
 
   function logout() {
@@ -36,7 +34,7 @@
     page("/login");
   }
 
-  $: folders = path.split("/");
+  let folders = $derived(path.split("/"));
 </script>
 
 <!--
@@ -65,7 +63,7 @@
           <!-- Use hand-written div to remove breadcrumb's margin -->
           <div class="breadcrumb align-items-center">
             <div class="breadcrumb-item">
-              <span class="link-primary" on:click={() => gotoFolderIndex(0)}>
+              <span class="link-primary" onclick={() => onGotoIndex?.(0)}>
                 {$navbar.home}
               </span>
             </div>
@@ -77,7 +75,7 @@
               >
                 <span
                   class="link-primary"
-                  on:click={() => gotoFolderIndex(i + 1)}
+                  onclick={() => onGotoIndex?.(i + 1)}
                 >
                   {folder}
                 </span>
@@ -90,15 +88,17 @@
       <div class="d-flex">
         <InputGroup>
           <Input type="text" bind:value={searchContent} />
-          <Button on:click={search}>{$navbar.search}</Button>
+          <Button on:click={() => onSearch?.(searchContent)}>
+            {$navbar.search}
+          </Button>
         </InputGroup>
         <button
           class="btn btn-secondary ms-2 chinese"
-          on:click={() => page("/setting")}
+          onclick={() => page("/setting")}
         >
           {$navbar.settings}
         </button>
-        <button class="btn btn-secondary ms-2 chinese" on:click={logout}>
+        <button class="btn btn-secondary ms-2 chinese" onclick={logout}>
           {$navbar.logout}
         </button>
       </div>

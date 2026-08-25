@@ -1,14 +1,14 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { Icon, Input, Button, ListGroup, ListGroupItem } from "sveltestrap";
+  import { Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
   import { move } from "./translate.js";
 
-  const dispatch = createEventDispatcher();
-  let path = ""; // folder path
-  let folders = [];
-  let selected; // selected folder name
+  let { onMoveFile } = $props();
+  let path = $state(""); // folder path
+  let folders = $state([]);
+  let selected = $state(); // selected folder name
 
   const clickFolder = (file) => {
     path = calcPath(file, path);
@@ -19,12 +19,14 @@
       return;
     }
     let selectedFolder = calcPath({ name: selected }, path);
-    dispatch("moveFile", selectedFolder);
+    onMoveFile?.(selectedFolder);
   };
 
-  $: getFolder(path).then(
-    (v) => (folders = v.filter((f) => f.type === "folder"))
-  );
+  $effect(() => {
+    void getFolder(path).then(
+      (v) => (folders = v.filter((f) => f.type === "folder"))
+    );
+  });
 </script>
 
 <div id="file-list">
@@ -38,7 +40,7 @@
     <ListGroupItem action>
       <div class="d-flex">
         <Icon name="arrow-90deg-up" class="pe-2" />
-        <div on:click={() => clickFolder({ name: ".." })}>
+        <div onclick={() => clickFolder({ name: ".." })}>
           {$move.upperFolder}
         </div>
       </div>
@@ -47,7 +49,7 @@
       <ListGroupItem action>
         <div class="d-flex">
           <Input type="radio" value={folder.name} bind:group={selected} />
-          <div on:click={() => clickFolder(folder)}>{folder.name}</div>
+          <div onclick={() => clickFolder(folder)}>{folder.name}</div>
         </div>
       </ListGroupItem>
     {/each}

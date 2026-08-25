@@ -1,10 +1,16 @@
 <script>
-  import { Carousel, CarouselControl, CarouselItem } from "sveltestrap";
-  /** @type any[] */
-  export let files;
-  export let selected;
+  import { Carousel, CarouselControl, CarouselItem } from "@sveltestrap/sveltestrap";
+  
+  /**
+   * @typedef {Object} Props
+   * @property {any} files
+   * @property {any} selected
+   */
+
+  /** @type {Props} */
+  let { files, selected } = $props();
   let items = files.map((v) => v.src);
-  let activeIndex = files.findIndex((v) => v.name === selected.name);
+  let activeIndex = $state(files.findIndex((v) => v.name === selected.name));
 </script>
 
 <Carousel {items} bind:activeIndex interval={false} ride={false}>

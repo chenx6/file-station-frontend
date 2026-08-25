@@ -3,22 +3,22 @@
     Container,
     Table,
     Button,
-    Icon,
     Input,
     Row,
     Col,
     Alert,
     TabContent,
     TabPane,
-  } from "sveltestrap";
+  } from "@sveltestrap/sveltestrap";
+  import Icon from "./lib/Icon.svelte";
   import NavBar from "./lib/NavBar.svelte";
   import { deleteShareFile, getShareIndex, resetPassword } from "./lib/api.js";
   import { formatShareUrl } from "./lib/path.js";
   import { onMount } from "svelte";
   import { setting } from "./lib/translate.js";
-  let shares = [];
-  let oldPassword, newPassword;
-  let message = "";
+  let shares = $state([]);
+  let oldPassword = $state(), newPassword = $state();
+  let message = $state("");
 
   const resetPasswordHandler = async () => {
     let response = await resetPassword(oldPassword, newPassword);
@@ -84,7 +84,7 @@
             <th>{$setting.path}</th>
             <th>{$setting.URL}</th>
             <th>{$setting.password}</th>
-            <th />
+            <th></th>
           </tr>
         </thead>
         <tbody>

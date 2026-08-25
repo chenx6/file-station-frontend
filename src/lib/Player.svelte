@@ -1,16 +1,23 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  import { ListGroup, ListGroupItem, Row, Col, Icon } from "sveltestrap";
+  import { onMount } from "svelte";
+  import { ListGroup, ListGroupItem, Row, Col } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import * as pathlib from "path-browserify";
   import { supportVideoType, supportAudioType } from "./store.js";
   import "plyr/dist/plyr.css";
-  /** @type any[] */
-  export let files; // file list
-  /** @type any */
-  export let selected; // selected file
-  const dispatch = createEventDispatcher();
+  
+  
+  /**
+   * @typedef {Object} Props
+   * @property {any} files - file list
+   * @property {any} selected - selected file
+   * @property {(file: any) => void} [onClickDownload]
+   */
+
+  /** @type {Props} */
+  let { files, selected, onClickDownload } = $props();
   let player;
-  let sources = []; // source list
+  let sources = $state([]); // source list
 
   const switchMedia = (idx) => {
     player.source = sources[idx];
@@ -45,10 +52,6 @@
     };
   };
 
-  const clickDownload = (file) => {
-    dispatch("clickDownload", file);
-  };
-
   sources = files.map((v) => toSource(v)).filter((v) => v);
 
   onMount(async () => {
@@ -76,12 +79,15 @@
         <ListGroupItem action>
           <div
             class="d-flex justify-content-between"
-            on:click={() => switchMedia(i)}
+            onclick={() => switchMedia(i)}
           >
             <div>{source.title}</div>
             <button
               class="btn"
-              on:click|stopPropagation={() => clickDownload(source.file)}
+              onclick={(event) => {
+                event.stopPropagation();
+                onClickDownload?.(source.file);
+              }}
             >
               <Icon name="download" />
             </button>

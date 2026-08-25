@@ -7,8 +7,7 @@
   import Footer from "./lib/Footer.svelte";
   import { getFolder } from "./lib/api.js";
   import "bootstrap/dist/css/bootstrap.min.css";
-  import "bootstrap-icons/font/bootstrap-icons.css";
-  let componment, path, query;
+  let componment = $state(), path = $state(), query = $state();
 
   const setParams = (ctx, next) => {
     path = ctx.params[0];
@@ -34,11 +33,13 @@
   page("/setting", setParams, () => (componment = Setting));
   page("/", verifyLogin);
   page.start();
+
+  const SvelteComponent = $derived(componment);
 </script>
 
 <div class="d-flex flex-column" style:height="100vh">
   <div class="flex-shrink-0">
-    <svelte:component this={componment} {path} {query} />
+    <SvelteComponent {path} {query} />
   </div>
   <Footer />
 </div>

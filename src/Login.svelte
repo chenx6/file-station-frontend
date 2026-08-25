@@ -1,12 +1,12 @@
 <script>
   // @ts-nocheck
-  import { Input, Label, Container, Button, Alert } from "sveltestrap";
+  import { Input, Label, Container, Button, Alert } from "@sveltestrap/sveltestrap";
   import { register, login } from "./lib/api.js";
   import page from "page";
   import { login as loginTr } from "./lib/translate.js";
 
-  let alert = { message: "", color: "" };
-  let username, password;
+  let alert = $state({ message: "", color: "" });
+  let username = $state(), password = $state();
   const loginHandler = async () => {
     let response = await login(username, password);
     if (response.status !== 200) {

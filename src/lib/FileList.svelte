@@ -10,58 +10,60 @@
     Input,
     Button,
     ModalFooter,
-    Icon,
     Alert,
-  } from "sveltestrap";
-  import { createEventDispatcher } from "svelte";
+  } from "@sveltestrap/sveltestrap";
+  import Icon from "./Icon.svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";
   import { fileList } from "./translate.js";
-  export let files = [];
-  const dispatch = createEventDispatcher();
+  let {
+    files = $bindable([]),
+    onClickFile,
+    onDownloadFile,
+    onDeleteFile,
+    onRenameFile,
+    onUploadFile,
+    onClickFolder,
+    onCreateFolder,
+    onShare,
+    onMoveFile,
+    onCloseModal,
+  } = $props();
   // Sorting
-  let sortMethod = { key: "name", order: "asc" };
+  let sortMethod = $state({ key: "name", order: "asc" });
   // Renaming
-  let newName = "";
+  let newName = $state("");
   let renamingFile;
-  let renaming = false;
+  let renaming = $state(false);
   // Uploading
-  let uploading = false;
-  let uploadingProgess = -1;
-  let uploadFiles;
+  let uploading = $state(false);
+  let uploadingProgess = $state(-1);
+  let uploadFiles = $state();
   // New folder
-  let creatingFolder = false;
-  let newFolderName = "";
+  let creatingFolder = $state(false);
+  let newFolderName = $state("");
   // Share
-  let sharing = false;
+  let sharing = $state(false);
   let sharingFile;
-  let sharingPassword = "";
-  let shareUrl = "";
+  let sharingPassword = $state("");
+  let shareUrl = $state("");
   // Move file
-  let moving = false;
+  let moving = $state(false);
   let movingFile = [];
   // Selected
-  let selected = [];
+  let selected = $state([]);
 
   const clickItem = (file) => {
     switch (file.type) {
       case "file":
-        dispatch("clickFile", file);
+        onClickFile?.(file);
         break;
       case "folder":
-        dispatch("clickFolder", file);
+        onClickFolder?.(file);
       default:
         break;
     }
   };
-
-  const downloadFile = (file) => {
-    dispatch("downloadFile", file);
-  };
-
-  const deleteFile = (file) => dispatch("deleteFile", [file]);
-
-  const deleteFiles = () => dispatch("deleteFile", selected);
 
   // Pop up rename window, use `renameFile` to finish rename
   const startRenaming = (file) => {
@@ -71,21 +73,14 @@
   };
 
   const renameFile = () => {
-    dispatch("renameFile", { file: renamingFile, newName });
+    onRenameFile?.({ file: renamingFile, newName });
     renaming = false;
-  };
-
-  const uploadFile = () => {
-    dispatch("uploadFile", {
-      files: uploadFiles,
-      monitor: (progress) => (uploadingProgess = progress),
-    });
   };
 
   const uploadFinish = () => {
     uploadingProgess = -1;
     uploading = false;
-    dispatch("closeModal");
+    onCloseModal?.();
   };
 
   // Pop up sharing window, wait for password input
@@ -95,23 +90,13 @@
     sharingFile = file;
   };
 
-  const shareFile = async () => {
-    dispatch("share", {
-      file: sharingFile,
-      password: sharingPassword,
-      callback: (url) => {
-        shareUrl = url;
-      },
-    });
-  };
-
   const cleanShareModal = () => {
     sharing = false;
     shareUrl = "";
   };
 
   const createNewFolder = () => {
-    dispatch("createFolder", { name: newFolderName });
+    onCreateFolder?.({ name: newFolderName });
     creatingFolder = false;
   };
 
@@ -126,9 +111,9 @@
     movingFile = selected;
   };
 
-  const moveFile = (event) => {
+  const moveFile = (newFolder) => {
     moving = false;
-    dispatch("moveFile", { file: movingFile, newFolder: event.detail });
+    onMoveFile?.({ file: movingFile, newFolder });
   };
 
   const bytesToSize = (bytes) => {
@@ -163,8 +148,8 @@
     }
   };
 
-  // Sort file order
-  $: {
+  // Sort file order without mutating the files prop.
+  let sortedFiles = $derived.by(() => {
     let cmpFn;
     if (sortMethod.order === "asc") {
       cmpFn = (a, b) =>
@@ -177,8 +162,8 @@
           .toString()
           .localeCompare(a[sortMethod.key].toString());
     }
-    files = files.sort(cmpFn);
-  }
+    return [...files].sort(cmpFn);
+  });
 </script>
 
 <!--
@@ -203,7 +188,15 @@
       {/if}
       <Input type="file" bind:files={uploadFiles} />
       <ModalFooter>
-        <Button on:click={uploadFile}>{$fileList.startUpload}</Button>
+        <Button
+          on:click={() =>
+            onUploadFile?.({
+              files: uploadFiles,
+              monitor: (progress) => (uploadingProgess = progress),
+            })}
+        >
+          {$fileList.startUpload}
+        </Button>
       </ModalFooter>
     </Modal>
   {/if}
@@ -243,7 +236,16 @@
       bind:value={sharingPassword}
       placeholder={$fileList.passwordOptional}
     />
-    <Button on:click={shareFile}>{$fileList.share}</Button>
+    <Button
+      on:click={() =>
+        onShare?.({
+          file: sharingFile,
+          password: sharingPassword,
+          callback: (url) => (shareUrl = url),
+        })}
+    >
+      {$fileList.share}
+    </Button>
   </Modal>
   <Modal
     header={$fileList.moveTo}
@@ -251,7 +253,7 @@
     isOpen={moving}
     toggle={() => (moving = false)}
   >
-    <Move on:moveFile={moveFile} />
+    <Move onMoveFile={moveFile} />
   </Modal>
   <!-- File list header -->
   <Row class="p-2">
@@ -259,13 +261,13 @@
       <Input type="checkbox" class="invisible" />
     </Col>
     <Col xs="6">
-      <div class="list-header" on:click={() => sortFiles("name")}>
+      <div class="list-header" onclick={() => sortFiles("name")}>
         {$fileList.fileName}<OrderIndicator key="name" {sortMethod} />
       </div>
     </Col>
     <!-- In mobile, hide time and size -->
     <Col xs="2" class="invisible-sm">
-      <div class="list-header" on:click={() => sortFiles("lastModifiedTime")}>
+      <div class="list-header" onclick={() => sortFiles("lastModifiedTime")}>
         {$fileList.lastModifiedTime}<OrderIndicator
           key="lastModifiedTime"
           {sortMethod}
@@ -273,27 +275,27 @@
       </div>
     </Col>
     <Col class="invisible-sm">
-      <div class="list-header" on:click={() => sortFiles("size")}>
+      <div class="list-header" onclick={() => sortFiles("size")}>
         {$fileList.lastModifiedTime}<OrderIndicator key="size" {sortMethod} />
       </div>
     </Col>
     <Col>{$fileList.operation}</Col>
   </Row>
   <!-- Upper folder -->
-  <div class="file" on:click={() => clickItem({ name: "..", type: "folder" })}>
+  <div class="file" onclick={() => clickItem({ name: "..", type: "folder" })}>
     <Row class="align-items-center p-2">
       <Col xs="auto">
-        <input class="form-check-input" type="checkbox" on:click={selectAll} />
+        <input class="form-check-input" type="checkbox" onclick={selectAll} />
       </Col>
       <Col xs="6"><Icon name="arrow-90deg-up" /> {$fileList.upperFolder}</Col>
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
       <Col>
-        <div class="d-flex" on:click|stopPropagation>
+        <div class="d-flex" onclick={(event) => event.stopPropagation()}>
           <Button class="invisible" color="light">
             <Icon name="download" />
           </Button>
-          <div class="px-1" />
+          <div class="px-1"></div>
           <Dropdown>
             <DropdownToggle class="btn btn-light">
               <Icon name="three-dots" />
@@ -306,7 +308,7 @@
                 {$fileList.createFolder}
               </DropdownItem>
               {#if selected.length !== 0}
-                <DropdownItem on:click={deleteFiles}>
+                <DropdownItem on:click={() => onDeleteFile?.(selected)}>
                   {$fileList.deleteSelectedFile}
                 </DropdownItem>
                 <DropdownItem on:click={startMovingFiles}>
@@ -321,11 +323,11 @@
     </Row>
   </div>
   <!-- File list -->
-  {#each files as file (file.name)}
-    <div class="file" on:click={() => clickItem(file)}>
+  {#each sortedFiles as file (file.name)}
+    <div class="file" onclick={() => clickItem(file)}>
       <Row class="align-items-center p-2">
         <Col xs="auto">
-          <div on:click|stopPropagation>
+          <div onclick={(event) => event.stopPropagation()}>
             <!-- Use raw input element because of the bug in sveltestrap -->
             <input
               class="form-check-input"
@@ -344,11 +346,11 @@
         </Col>
         <Col class="invisible-sm text-truncate">{bytesToSize(file.size)}</Col>
         <Col>
-          <div class="d-flex" on:click|stopPropagation>
-            <Button color="light" on:click={() => downloadFile(file)}>
+          <div class="d-flex" onclick={(event) => event.stopPropagation()}>
+            <Button color="light" on:click={() => onDownloadFile?.(file)}>
               <Icon name="download" />
             </Button>
-            <div class="px-1" />
+            <div class="px-1"></div>
             <Dropdown>
               <DropdownToggle class="btn btn-light">
                 <Icon name="three-dots" />
@@ -357,7 +359,7 @@
                 <DropdownItem on:click={() => startRenaming(file)}>
                   {$fileList.rename}
                 </DropdownItem>
-                <DropdownItem on:click={() => deleteFile(file)}>
+                <DropdownItem on:click={() => onDeleteFile?.([file])}>
                   {$fileList.delete}
                 </DropdownItem>
                 <DropdownItem on:click={() => startSharing(file)}>
