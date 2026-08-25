@@ -1,5 +1,5 @@
 <script>
-  import { run, createBubbler, stopPropagation } from 'svelte/legacy';
+  import { createBubbler, stopPropagation } from 'svelte/legacy';
 
   const bubble = createBubbler();
   import {
@@ -166,8 +166,8 @@
     }
   };
 
-  // Sort file order
-  run(() => {
+  // Sort file order without mutating the files prop.
+  let sortedFiles = $derived.by(() => {
     let cmpFn;
     if (sortMethod.order === "asc") {
       cmpFn = (a, b) =>
@@ -180,7 +180,7 @@
           .toString()
           .localeCompare(a[sortMethod.key].toString());
     }
-    files = files.sort(cmpFn);
+    return [...files].sort(cmpFn);
   });
 </script>
 
@@ -324,7 +324,7 @@
     </Row>
   </div>
   <!-- File list -->
-  {#each files as file (file.name)}
+  {#each sortedFiles as file (file.name)}
     <div class="file" onclick={() => clickItem(file)}>
       <Row class="align-items-center p-2">
         <Col xs="auto">

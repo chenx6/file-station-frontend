@@ -1,6 +1,4 @@
 <script>
-  import { run } from 'svelte/legacy';
-
   import { createEventDispatcher } from "svelte";
   import { Icon, Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
   import { getFolder } from "./api.js";
@@ -24,8 +22,8 @@
     dispatch("moveFile", selectedFolder);
   };
 
-  run(() => {
-    getFolder(path).then(
+  $effect(() => {
+    void getFolder(path).then(
       (v) => (folders = v.filter((f) => f.type === "folder"))
     );
   });

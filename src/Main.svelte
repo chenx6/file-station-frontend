@@ -1,6 +1,4 @@
 <script>
-  import { run } from 'svelte/legacy';
-
   import { Spinner, Modal } from "@sveltestrap/sveltestrap";
   import page from "page";
   import * as pathlib from "path-browserify";
@@ -177,8 +175,8 @@
     page("/files/" + path);
   };
 
-  run(() => {
-    getFolderHandler(path);
+  $effect(() => {
+    void getFolderHandler(path);
   });
   // $: sibilingFolders = files.filter((v) => v.type === "folder");
 </script>

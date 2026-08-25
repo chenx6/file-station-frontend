@@ -1,6 +1,4 @@
 <script>
-  import { run } from 'svelte/legacy';
-
   import { onMount } from "svelte";
   import { Container, Spinner, Modal, Input, Button, Alert } from "@sveltestrap/sveltestrap";
   import FileList from "./lib/FileList.svelte";
@@ -69,9 +67,13 @@
     password = queryMap.get("password");
   });
 
-  run(() => {
+  $effect(() => {
+    if (!url) {
+      return;
+    }
+
     loading = true;
-    getShareFolderHandler(url, filePath, password).then(
+    void getShareFolderHandler(url, filePath, password).then(
       () => (loading = false)
     );
   });
