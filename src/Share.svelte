@@ -1,4 +1,6 @@
 <script>
+  import { run } from 'svelte/legacy';
+
   import { onMount } from "svelte";
   import { Container, Spinner, Modal, Input, Button, Alert } from "@sveltestrap/sveltestrap";
   import FileList from "./lib/FileList.svelte";
@@ -6,15 +8,21 @@
   import { getShareFolder, getShareFile } from "./lib/api.js";
   import { calcPath, getPathByIndex } from "./lib/path.js";
   import { share } from "./lib/translate.js";
-  export let query = ""; // Get url and password
-  let url = "";
-  let filePath = ""; // Relative to share folder's root
-  let password = "";
-  let files = [];
-  let loading = false;
-  let inputPassword = ""; // Password input
-  let requirePassword = false;
-  let errorMessage = "";
+  /**
+   * @typedef {Object} Props
+   * @property {string} [query] - Get url and password
+   */
+
+  /** @type {Props} */
+  let { query = "" } = $props();
+  let url = $state("");
+  let filePath = $state(""); // Relative to share folder's root
+  let password = $state("");
+  let files = $state([]);
+  let loading = $state(false);
+  let inputPassword = $state(""); // Password input
+  let requirePassword = $state(false);
+  let errorMessage = $state("");
 
   const getFolder = async ({ detail: file }) => {
     filePath = calcPath(file, filePath);
@@ -61,12 +69,12 @@
     password = queryMap.get("password");
   });
 
-  $: {
+  run(() => {
     loading = true;
     getShareFolderHandler(url, filePath, password).then(
       () => (loading = false)
     );
-  }
+  });
 </script>
 
 <NavBar path={filePath} on:gotoIndex={gotoIndexHandler} />

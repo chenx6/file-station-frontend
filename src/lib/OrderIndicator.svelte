@@ -1,6 +1,6 @@
 <script>
   import { Icon } from "@sveltestrap/sveltestrap";
-  export let key, sortMethod;
+  let { key, sortMethod } = $props();
 </script>
 
 {#if key == sortMethod.key}

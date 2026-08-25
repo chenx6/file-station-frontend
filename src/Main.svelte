@@ -1,4 +1,6 @@
 <script>
+  import { run } from 'svelte/legacy';
+
   import { Spinner, Modal } from "@sveltestrap/sveltestrap";
   import page from "page";
   import * as pathlib from "path-browserify";
@@ -27,16 +29,16 @@
   } from "./lib/api.js";
   import { calcPath, formatShareUrl, getPathByIndex } from "./lib/path.js";
   import { main } from "./lib/translate.js";
-  export let path;
+  let { path = $bindable() } = $props();
 
-  let files = [];
-  let loading = false; // Showing loading spinner
-  let playing = false, // Video/Audio playing
-    playingFile;
-  let showingImg = false,
-    img;
-  let showingText = false,
-    textFile;
+  let files = $state([]);
+  let loading = $state(false); // Showing loading spinner
+  let playing = $state(false), // Video/Audio playing
+    playingFile = $state();
+  let showingImg = $state(false),
+    img = $state();
+  let showingText = $state(false),
+    textFile = $state();
 
   const gotoFolder = (event) => {
     let newPath = calcPath(event.detail, path);
@@ -175,7 +177,9 @@
     page("/files/" + path);
   };
 
-  $: getFolderHandler(path);
+  run(() => {
+    getFolderHandler(path);
+  });
   // $: sibilingFolders = files.filter((v) => v.type === "folder");
 </script>
 

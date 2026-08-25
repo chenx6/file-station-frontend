@@ -1,4 +1,7 @@
 <script>
+  import { run, createBubbler, stopPropagation } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import {
     Col,
     Row,
@@ -17,31 +20,31 @@
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";
   import { fileList } from "./translate.js";
-  export let files = [];
+  let { files = $bindable([]) } = $props();
   const dispatch = createEventDispatcher();
   // Sorting
-  let sortMethod = { key: "name", order: "asc" };
+  let sortMethod = $state({ key: "name", order: "asc" });
   // Renaming
-  let newName = "";
+  let newName = $state("");
   let renamingFile;
-  let renaming = false;
+  let renaming = $state(false);
   // Uploading
-  let uploading = false;
-  let uploadingProgess = -1;
-  let uploadFiles;
+  let uploading = $state(false);
+  let uploadingProgess = $state(-1);
+  let uploadFiles = $state();
   // New folder
-  let creatingFolder = false;
-  let newFolderName = "";
+  let creatingFolder = $state(false);
+  let newFolderName = $state("");
   // Share
-  let sharing = false;
+  let sharing = $state(false);
   let sharingFile;
-  let sharingPassword = "";
-  let shareUrl = "";
+  let sharingPassword = $state("");
+  let shareUrl = $state("");
   // Move file
-  let moving = false;
+  let moving = $state(false);
   let movingFile = [];
   // Selected
-  let selected = [];
+  let selected = $state([]);
 
   const clickItem = (file) => {
     switch (file.type) {
@@ -164,7 +167,7 @@
   };
 
   // Sort file order
-  $: {
+  run(() => {
     let cmpFn;
     if (sortMethod.order === "asc") {
       cmpFn = (a, b) =>
@@ -178,7 +181,7 @@
           .localeCompare(a[sortMethod.key].toString());
     }
     files = files.sort(cmpFn);
-  }
+  });
 </script>
 
 <!--
@@ -259,13 +262,13 @@
       <Input type="checkbox" class="invisible" />
     </Col>
     <Col xs="6">
-      <div class="list-header" on:click={() => sortFiles("name")}>
+      <div class="list-header" onclick={() => sortFiles("name")}>
         {$fileList.fileName}<OrderIndicator key="name" {sortMethod} />
       </div>
     </Col>
     <!-- In mobile, hide time and size -->
     <Col xs="2" class="invisible-sm">
-      <div class="list-header" on:click={() => sortFiles("lastModifiedTime")}>
+      <div class="list-header" onclick={() => sortFiles("lastModifiedTime")}>
         {$fileList.lastModifiedTime}<OrderIndicator
           key="lastModifiedTime"
           {sortMethod}
@@ -273,27 +276,27 @@
       </div>
     </Col>
     <Col class="invisible-sm">
-      <div class="list-header" on:click={() => sortFiles("size")}>
+      <div class="list-header" onclick={() => sortFiles("size")}>
         {$fileList.lastModifiedTime}<OrderIndicator key="size" {sortMethod} />
       </div>
     </Col>
     <Col>{$fileList.operation}</Col>
   </Row>
   <!-- Upper folder -->
-  <div class="file" on:click={() => clickItem({ name: "..", type: "folder" })}>
+  <div class="file" onclick={() => clickItem({ name: "..", type: "folder" })}>
     <Row class="align-items-center p-2">
       <Col xs="auto">
-        <input class="form-check-input" type="checkbox" on:click={selectAll} />
+        <input class="form-check-input" type="checkbox" onclick={selectAll} />
       </Col>
       <Col xs="6"><Icon name="arrow-90deg-up" /> {$fileList.upperFolder}</Col>
       <Col xs="2" class="invisible-sm" />
       <Col class="invisible-sm" />
       <Col>
-        <div class="d-flex" on:click|stopPropagation>
+        <div class="d-flex" onclick={stopPropagation(bubble('click'))}>
           <Button class="invisible" color="light">
             <Icon name="download" />
           </Button>
-          <div class="px-1" />
+          <div class="px-1"></div>
           <Dropdown>
             <DropdownToggle class="btn btn-light">
               <Icon name="three-dots" />
@@ -322,10 +325,10 @@
   </div>
   <!-- File list -->
   {#each files as file (file.name)}
-    <div class="file" on:click={() => clickItem(file)}>
+    <div class="file" onclick={() => clickItem(file)}>
       <Row class="align-items-center p-2">
         <Col xs="auto">
-          <div on:click|stopPropagation>
+          <div onclick={stopPropagation(bubble('click'))}>
             <!-- Use raw input element because of the bug in sveltestrap -->
             <input
               class="form-check-input"
@@ -344,11 +347,11 @@
         </Col>
         <Col class="invisible-sm text-truncate">{bytesToSize(file.size)}</Col>
         <Col>
-          <div class="d-flex" on:click|stopPropagation>
+          <div class="d-flex" onclick={stopPropagation(bubble('click'))}>
             <Button color="light" on:click={() => downloadFile(file)}>
               <Icon name="download" />
             </Button>
-            <div class="px-1" />
+            <div class="px-1"></div>
             <Dropdown>
               <DropdownToggle class="btn btn-light">
                 <Icon name="three-dots" />

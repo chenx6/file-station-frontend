@@ -14,10 +14,16 @@
   import { createEventDispatcher } from "svelte";
   import page from "page";
   import { navbar } from "./translate.js";
-  export let path = ""; // Show path breadcrumb
+  /**
+   * @typedef {Object} Props
+   * @property {string} [path] - Show path breadcrumb
+   */
+
+  /** @type {Props} */
+  let { path = "" } = $props();
   const dispatch = createEventDispatcher();
-  let isOpen = false; // Indicate the menu
-  let searchContent = "";
+  let isOpen = $state(false); // Indicate the menu
+  let searchContent = $state("");
 
   function handleUpdate(event) {
     isOpen = event.detail.isOpen;
@@ -36,7 +42,7 @@
     page("/login");
   }
 
-  $: folders = path.split("/");
+  let folders = $derived(path.split("/"));
 </script>
 
 <!--
@@ -65,7 +71,7 @@
           <!-- Use hand-written div to remove breadcrumb's margin -->
           <div class="breadcrumb align-items-center">
             <div class="breadcrumb-item">
-              <span class="link-primary" on:click={() => gotoFolderIndex(0)}>
+              <span class="link-primary" onclick={() => gotoFolderIndex(0)}>
                 {$navbar.home}
               </span>
             </div>
@@ -77,7 +83,7 @@
               >
                 <span
                   class="link-primary"
-                  on:click={() => gotoFolderIndex(i + 1)}
+                  onclick={() => gotoFolderIndex(i + 1)}
                 >
                   {folder}
                 </span>
@@ -94,11 +100,11 @@
         </InputGroup>
         <button
           class="btn btn-secondary ms-2 chinese"
-          on:click={() => page("/setting")}
+          onclick={() => page("/setting")}
         >
           {$navbar.settings}
         </button>
-        <button class="btn btn-secondary ms-2 chinese" on:click={logout}>
+        <button class="btn btn-secondary ms-2 chinese" onclick={logout}>
           {$navbar.logout}
         </button>
       </div>

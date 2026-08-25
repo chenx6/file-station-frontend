@@ -1,7 +1,7 @@
 <script>
   import * as pathlib from "path-browserify";
-  export let file;
-  let result = "";
+  let { file } = $props();
+  let result = $state("");
 
   const fetchAndRender = async () => {
     let response = await fetch(file.src, { credentials: "include" });
