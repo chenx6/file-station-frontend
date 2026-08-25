@@ -22,11 +22,11 @@
   let requirePassword = $state(false);
   let errorMessage = $state("");
 
-  const getFolder = async ({ detail: file }) => {
+  const getFolder = async (file) => {
     filePath = calcPath(file, filePath);
   };
 
-  const getFile = async ({ detail: file }) => {
+  const getFile = async (file) => {
     await getShareFile(url, file.name, calcPath(file, filePath), password);
   };
 
@@ -56,8 +56,8 @@
     errorMessage = $share.wrongPassword;
   };
 
-  const gotoIndexHandler = (event) => {
-    filePath = getPathByIndex(filePath, event.detail);
+  const gotoIndexHandler = (index) => {
+    filePath = getPathByIndex(filePath, index);
   };
 
   onMount(async () => {
@@ -79,7 +79,7 @@
   });
 </script>
 
-<NavBar path={filePath} on:gotoIndex={gotoIndexHandler} />
+<NavBar path={filePath} onGotoIndex={gotoIndexHandler} />
 <Container>
   <Modal header={$share.passwordRequired} body isOpen={requirePassword}>
     {#if errorMessage.length !== 0}
@@ -93,6 +93,6 @@
       <Spinner />
     </div>
   {:else}
-    <FileList {files} on:clickFolder={getFolder} on:downloadFile={getFile} />
+    <FileList {files} onClickFolder={getFolder} onDownloadFile={getFile} />
   {/if}
 </Container>

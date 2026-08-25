@@ -13,12 +13,22 @@
     Icon,
     Alert,
   } from "@sveltestrap/sveltestrap";
-  import { createEventDispatcher } from "svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";
   import { fileList } from "./translate.js";
-  let { files = $bindable([]) } = $props();
-  const dispatch = createEventDispatcher();
+  let {
+    files = $bindable([]),
+    onClickFile,
+    onDownloadFile,
+    onDeleteFile,
+    onRenameFile,
+    onUploadFile,
+    onClickFolder,
+    onCreateFolder,
+    onShare,
+    onMoveFile,
+    onCloseModal,
+  } = $props();
   // Sorting
   let sortMethod = $state({ key: "name", order: "asc" });
   // Renaming
@@ -46,22 +56,14 @@
   const clickItem = (file) => {
     switch (file.type) {
       case "file":
-        dispatch("clickFile", file);
+        onClickFile?.(file);
         break;
       case "folder":
-        dispatch("clickFolder", file);
+        onClickFolder?.(file);
       default:
         break;
     }
   };
-
-  const downloadFile = (file) => {
-    dispatch("downloadFile", file);
-  };
-
-  const deleteFile = (file) => dispatch("deleteFile", [file]);
-
-  const deleteFiles = () => dispatch("deleteFile", selected);
 
   // Pop up rename window, use `renameFile` to finish rename
   const startRenaming = (file) => {
@@ -71,21 +73,14 @@
   };
 
   const renameFile = () => {
-    dispatch("renameFile", { file: renamingFile, newName });
+    onRenameFile?.({ file: renamingFile, newName });
     renaming = false;
-  };
-
-  const uploadFile = () => {
-    dispatch("uploadFile", {
-      files: uploadFiles,
-      monitor: (progress) => (uploadingProgess = progress),
-    });
   };
 
   const uploadFinish = () => {
     uploadingProgess = -1;
     uploading = false;
-    dispatch("closeModal");
+    onCloseModal?.();
   };
 
   // Pop up sharing window, wait for password input
@@ -95,23 +90,13 @@
     sharingFile = file;
   };
 
-  const shareFile = async () => {
-    dispatch("share", {
-      file: sharingFile,
-      password: sharingPassword,
-      callback: (url) => {
-        shareUrl = url;
-      },
-    });
-  };
-
   const cleanShareModal = () => {
     sharing = false;
     shareUrl = "";
   };
 
   const createNewFolder = () => {
-    dispatch("createFolder", { name: newFolderName });
+    onCreateFolder?.({ name: newFolderName });
     creatingFolder = false;
   };
 
@@ -126,9 +111,9 @@
     movingFile = selected;
   };
 
-  const moveFile = (event) => {
+  const moveFile = (newFolder) => {
     moving = false;
-    dispatch("moveFile", { file: movingFile, newFolder: event.detail });
+    onMoveFile?.({ file: movingFile, newFolder });
   };
 
   const bytesToSize = (bytes) => {
@@ -203,7 +188,15 @@
       {/if}
       <Input type="file" bind:files={uploadFiles} />
       <ModalFooter>
-        <Button on:click={uploadFile}>{$fileList.startUpload}</Button>
+        <Button
+          on:click={() =>
+            onUploadFile?.({
+              files: uploadFiles,
+              monitor: (progress) => (uploadingProgess = progress),
+            })}
+        >
+          {$fileList.startUpload}
+        </Button>
       </ModalFooter>
     </Modal>
   {/if}
@@ -243,7 +236,16 @@
       bind:value={sharingPassword}
       placeholder={$fileList.passwordOptional}
     />
-    <Button on:click={shareFile}>{$fileList.share}</Button>
+    <Button
+      on:click={() =>
+        onShare?.({
+          file: sharingFile,
+          password: sharingPassword,
+          callback: (url) => (shareUrl = url),
+        })}
+    >
+      {$fileList.share}
+    </Button>
   </Modal>
   <Modal
     header={$fileList.moveTo}
@@ -251,7 +253,7 @@
     isOpen={moving}
     toggle={() => (moving = false)}
   >
-    <Move on:moveFile={moveFile} />
+    <Move onMoveFile={moveFile} />
   </Modal>
   <!-- File list header -->
   <Row class="p-2">
@@ -306,7 +308,7 @@
                 {$fileList.createFolder}
               </DropdownItem>
               {#if selected.length !== 0}
-                <DropdownItem on:click={deleteFiles}>
+                <DropdownItem on:click={() => onDeleteFile?.(selected)}>
                   {$fileList.deleteSelectedFile}
                 </DropdownItem>
                 <DropdownItem on:click={startMovingFiles}>
@@ -345,7 +347,7 @@
         <Col class="invisible-sm text-truncate">{bytesToSize(file.size)}</Col>
         <Col>
           <div class="d-flex" onclick={(event) => event.stopPropagation()}>
-            <Button color="light" on:click={() => downloadFile(file)}>
+            <Button color="light" on:click={() => onDownloadFile?.(file)}>
               <Icon name="download" />
             </Button>
             <div class="px-1"></div>
@@ -357,7 +359,7 @@
                 <DropdownItem on:click={() => startRenaming(file)}>
                   {$fileList.rename}
                 </DropdownItem>
-                <DropdownItem on:click={() => deleteFile(file)}>
+                <DropdownItem on:click={() => onDeleteFile?.([file])}>
                   {$fileList.delete}
                 </DropdownItem>
                 <DropdownItem on:click={() => startSharing(file)}>

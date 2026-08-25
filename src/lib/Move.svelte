@@ -1,11 +1,10 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import { Icon, Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
   import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
   import { move } from "./translate.js";
 
-  const dispatch = createEventDispatcher();
+  let { onMoveFile } = $props();
   let path = $state(""); // folder path
   let folders = $state([]);
   let selected = $state(); // selected folder name
@@ -19,7 +18,7 @@
       return;
     }
     let selectedFolder = calcPath({ name: selected }, path);
-    dispatch("moveFile", selectedFolder);
+    onMoveFile?.(selectedFolder);
   };
 
   $effect(() => {

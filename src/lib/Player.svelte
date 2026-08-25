@@ -1,5 +1,5 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
   import { ListGroup, ListGroupItem, Row, Col, Icon } from "@sveltestrap/sveltestrap";
   import * as pathlib from "path-browserify";
   import { supportVideoType, supportAudioType } from "./store.js";
@@ -10,11 +10,11 @@
    * @typedef {Object} Props
    * @property {any} files - file list
    * @property {any} selected - selected file
+   * @property {(file: any) => void} [onClickDownload]
    */
 
   /** @type {Props} */
-  let { files, selected } = $props();
-  const dispatch = createEventDispatcher();
+  let { files, selected, onClickDownload } = $props();
   let player;
   let sources = $state([]); // source list
 
@@ -51,10 +51,6 @@
     };
   };
 
-  const clickDownload = (file) => {
-    dispatch("clickDownload", file);
-  };
-
   sources = files.map((v) => toSource(v)).filter((v) => v);
 
   onMount(async () => {
@@ -89,7 +85,7 @@
               class="btn"
               onclick={(event) => {
                 event.stopPropagation();
-                clickDownload(source.file);
+                onClickDownload?.(source.file);
               }}
             >
               <Icon name="download" />

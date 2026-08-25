@@ -11,30 +11,22 @@
     InputGroup,
     Button,
   } from "@sveltestrap/sveltestrap";
-  import { createEventDispatcher } from "svelte";
   import page from "page";
   import { navbar } from "./translate.js";
   /**
    * @typedef {Object} Props
    * @property {string} [path] - Show path breadcrumb
+   * @property {(searchContent: string) => void} [onSearch]
+   * @property {(index: number) => void} [onGotoIndex]
    */
 
   /** @type {Props} */
-  let { path = "" } = $props();
-  const dispatch = createEventDispatcher();
+  let { path = "", onSearch, onGotoIndex } = $props();
   let isOpen = $state(false); // Indicate the menu
   let searchContent = $state("");
 
   function handleUpdate(event) {
     isOpen = event.detail.isOpen;
-  }
-
-  function search() {
-    dispatch("search", searchContent);
-  }
-
-  function gotoFolderIndex(idx) {
-    dispatch("gotoIndex", idx);
   }
 
   function logout() {
@@ -71,7 +63,7 @@
           <!-- Use hand-written div to remove breadcrumb's margin -->
           <div class="breadcrumb align-items-center">
             <div class="breadcrumb-item">
-              <span class="link-primary" onclick={() => gotoFolderIndex(0)}>
+              <span class="link-primary" onclick={() => onGotoIndex?.(0)}>
                 {$navbar.home}
               </span>
             </div>
@@ -83,7 +75,7 @@
               >
                 <span
                   class="link-primary"
-                  onclick={() => gotoFolderIndex(i + 1)}
+                  onclick={() => onGotoIndex?.(i + 1)}
                 >
                   {folder}
                 </span>
@@ -96,7 +88,9 @@
       <div class="d-flex">
         <InputGroup>
           <Input type="text" bind:value={searchContent} />
-          <Button on:click={search}>{$navbar.search}</Button>
+          <Button on:click={() => onSearch?.(searchContent)}>
+            {$navbar.search}
+          </Button>
         </InputGroup>
         <button
           class="btn btn-secondary ms-2 chinese"
