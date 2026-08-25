@@ -10,7 +10,7 @@
     Alert,
     TabContent,
     TabPane,
-  } from "sveltestrap";
+  } from "@sveltestrap/sveltestrap";
   import NavBar from "./lib/NavBar.svelte";
   import { deleteShareFile, getShareIndex, resetPassword } from "./lib/api.js";
   import { formatShareUrl } from "./lib/path.js";

@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import { Input, Label, Container, Button, Alert } from "sveltestrap";
+  import { Input, Label, Container, Button, Alert } from "@sveltestrap/sveltestrap";
   import { register, login } from "./lib/api.js";
   import page from "page";
   import { login as loginTr } from "./lib/translate.js";

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { Container, Spinner, Modal, Input, Button, Alert } from "sveltestrap";
+  import { Container, Spinner, Modal, Input, Button, Alert } from "@sveltestrap/sveltestrap";
   import FileList from "./lib/FileList.svelte";
   import NavBar from "./lib/NavBar.svelte";
   import { getShareFolder, getShareFile } from "./lib/api.js";

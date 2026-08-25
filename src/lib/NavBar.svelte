@@ -10,7 +10,7 @@
     Input,
     InputGroup,
     Button,
-  } from "sveltestrap";
+  } from "@sveltestrap/sveltestrap";
   import { createEventDispatcher } from "svelte";
   import page from "page";
   import { navbar } from "./translate.js";

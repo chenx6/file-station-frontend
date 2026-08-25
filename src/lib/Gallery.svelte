@@ -1,5 +1,5 @@
 <script>
-  import { Carousel, CarouselControl, CarouselItem } from "sveltestrap";
+  import { Carousel, CarouselControl, CarouselItem } from "@sveltestrap/sveltestrap";
   /** @type any[] */
   export let files;
   export let selected;

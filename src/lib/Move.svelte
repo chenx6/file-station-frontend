@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
-  import { Icon, Input, Button, ListGroup, ListGroupItem } from "sveltestrap";
+  import { Icon, Input, Button, ListGroup, ListGroupItem } from "@sveltestrap/sveltestrap";
   import { getFolder } from "./api.js";
   import { calcPath } from "./path.js";
   import { move } from "./translate.js";

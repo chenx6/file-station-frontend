@@ -12,7 +12,7 @@
     ModalFooter,
     Icon,
     Alert,
-  } from "sveltestrap";
+  } from "@sveltestrap/sveltestrap";
   import { createEventDispatcher } from "svelte";
   import OrderIndicator from "./OrderIndicator.svelte";
   import Move from "./Move.svelte";

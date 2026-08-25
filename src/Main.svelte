@@ -1,5 +1,5 @@
 <script>
-  import { Spinner, Modal } from "sveltestrap";
+  import { Spinner, Modal } from "@sveltestrap/sveltestrap";
   import page from "page";
   import * as pathlib from "path-browserify";
   import FileList from "./lib/FileList.svelte";
